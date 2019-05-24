@@ -78,10 +78,10 @@ FROM base
 WORKDIR /app
 
 # Copy binary from builder image
-COPY --from=builder /build/app/target/release/hello .
+COPY --from=builder /build/app/target/release/main .
 
 # Copy other folders required by the application. Example:
 # COPY --from=builder /build/app/assets assets
 
 # Launch application
-CMD ["./hello", "rpi"]
+CMD ["./main", "rpi"]
