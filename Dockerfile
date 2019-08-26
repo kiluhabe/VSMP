@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 COPY ./requirements.txt .
 
-RUN apt-get update && apt-get install gcc python-dev zlib1g-dev -y
+RUN apt-get update && apt-get install gcc python-dev zlib1g-dev libjpeg-dev -y
 
 RUN pip install -r requirements.txt
 
