@@ -1,87 +1,15 @@
-################################################################################
-# Base image
-################################################################################
+FROM balenalib/rpi-python:3-stretch-run
 
-FROM balenalib/rpi-debian as base
+WORKDIR /usr/src/app
 
-ENV INITSYSTEM=on
-ENV DEBIAN_FRONTEND=noninteractive
+COPY ./requirements.txt .
 
-################################################################################
-# Rust image
-################################################################################
+RUN pip install -r requirements.txt
 
-FROM base as rust
+COPY . ./
 
-# Install build tools
-RUN apt-get -q update && apt-get install -yq --no-install-recommends build-essential curl file
+# Enable udevd so that plugged dynamic hardware devices show up in our container.
+ENV UDEV=1
 
-ENV PATH=/root/.cargo/bin:$PATH
-
-# Install Rust
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-
-################################################################################
-# Dependencies
-################################################################################
-
-FROM rust as dependencies
-
-WORKDIR /build
-
-# Create new fake project ($USER is needed by `cargo new`)
-RUN USER=root cargo new app
-
-WORKDIR /build/app
-
-# Copy real app dependencies
-COPY Cargo.* ./
-
-# Build fake project with real dependencies
-RUN cargo build --release
-
-# Remove the fake app build artifacts
-#
-# NOTE If your application name contains `-` (`foo-bar` for example)
-# then the correct command to remove build artifacts looks like:
-#
-# RUN rm -rf target/release/foo-bar target/release/deps/foo_bar-*
-#                              ^                           ^
-RUN rm -rf target/release/hello* target/release/deps/hello-*
-
-################################################################################
-# Builder
-################################################################################
-
-FROM rust as builder
-
-# We do not want to download deps, update registry, ... again
-COPY --from=dependencies /root/.cargo /root/.cargo
-
-WORKDIR /build/app
-
-# Copy everything, not just source code
-COPY . .
-
-# Update already built deps from dependencies image
-COPY --from=dependencies /build/app/target target
-
-# Build real app
-RUN cargo build --release
-
-################################################################################
-# Final image
-################################################################################
-
-FROM base
-
-WORKDIR /app
-
-# Copy binary from builder image
-COPY --from=builder /build/app/target/release/vsmp .
-
-# Copy other folders required by the application. Example:
-# COPY --from=builder /build/app/assets assets
-
-# Launch application
-CMD ["./vsmp", "rpi"]
+# main.py will run when container starts up on the device
+CMD ["epd7in5"]

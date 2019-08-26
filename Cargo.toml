@@ -1,8 +1,0 @@
-[package]
-name = "vsmp"
-version = "0.1.0"
-authors = ["kiluhabe <kiluhabe@users.noreply.github.com>"]
-edition = "2018"
-
-[dependencies]
-rppal = "0.11.2"
