@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 COPY ./requirements.txt .
 
-RUN apt-get update && apt-get install gcc -y
+RUN apt-get update && apt-get install gcc python-dev -y
 
 RUN pip install -r requirements.txt
 
