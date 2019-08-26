@@ -1,4 +1,4 @@
-FROM balenalib/rpi-python:3-stretch-run
+FROM balenalib/rpi-python:3
 
 WORKDIR /usr/src/app
 
