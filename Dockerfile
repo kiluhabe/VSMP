@@ -14,4 +14,4 @@ COPY . ./
 ENV UDEV=1
 
 # main.py will run when container starts up on the device
-CMD ["epd7in5"]
+CMD ["epd7in5b"]
