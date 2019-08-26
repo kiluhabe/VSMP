@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 COPY ./requirements.txt .
 
-RUN apt-get update && apt-get install gcc python-dev zlib1g-dev libjpeg-dev libfreetype6-dev -y
+RUN apt-get update && apt-get install gcc python-dev zlib1g-dev libjpeg-dev libfreetype6-dev fonts-freefont-ttf -y
 
 RUN pip install -r requirements.txt
 
