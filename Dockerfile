@@ -1,4 +1,4 @@
-FROM balenalib/rpi-python:3.7
+FROM balenalib/rpi-python:2
 
 WORKDIR /usr/src/app
 
@@ -14,4 +14,4 @@ COPY . ./
 ENV UDEV=1
 
 # main.py will run when container starts up on the device
-CMD ["epd7in5b"]
+CMD ["epd7in5"]
