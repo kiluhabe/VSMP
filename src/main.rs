@@ -36,5 +36,8 @@ fn main() -> Result<(), VSMPError>{
 
     epd.init()?;
     epd.display_frame(&buffer)?;
+
+    epd.interface.sleep_ms(10000);
+
     Ok(())
 }
