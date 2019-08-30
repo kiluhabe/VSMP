@@ -32,8 +32,9 @@ fn main() -> Result<(), VSMPError>{
             Luma([255u8])
         }
     });
-
     let buffer = epd.get_frame_buffer(img);
+
+    epd.init()?;
     epd.display_frame(&buffer)?;
     Ok(())
 }
