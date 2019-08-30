@@ -1,4 +1,0 @@
-epd-library==0.2.2
-Pillow==6.1.0
-RPi.GPIO==0.7.0
-spidev==3.4
