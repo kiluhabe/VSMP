@@ -189,7 +189,6 @@ impl EPD {
                 if image.get_pixel(x, y) == &Luma([0u8]) {
                     let address = ((x + y * self.width) / 8) as usize;
                     buffer[address] |= 0x80 >> (x % 8);
-                    println!("{}", address)
                 }
             }
         }
