@@ -7,9 +7,6 @@ use image::{GrayImage,Luma};
 use crate::epd_interface::{EPDInterface, PinNumber};
 use crate::errors::VSMPError;
 
-const WIDTH: u16 = 640;
-const HEIGHT: u16 = 384;
-
 pub enum Command {
     PanelSetting,
     PowerSetting,
@@ -174,7 +171,7 @@ impl EPD {
         Ok(())
     }
     pub fn get_frame_buffer(&self, image: GrayImage) -> Vec<u8>{
-        let buffer_size: u16 = HEIGHT * WIDTH / 8;
+        let buffer_size: u32 = self.height * self.width / 8;
         let mut buffer: Vec<u8> = Vec::with_capacity(buffer_size as usize);
 
         if image.height() != self.height || image.width() != self.width {
