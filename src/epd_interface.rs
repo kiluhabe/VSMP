@@ -1,8 +1,10 @@
 extern crate rppal;
+extern crate libc;
 
 use rppal::gpio::{Gpio, Level};
 use rppal::spi::{Spi};
 use std::{thread, time};
+use libc::sleep;
 
 use crate::errors::VSMPError;
 
@@ -52,9 +54,8 @@ impl EPDInterface {
         Ok(())
     }
     pub fn sleep_ms(&self, ms: u64) {
-        let _ = thread::spawn(move || {
-            let ten_millis = time::Duration::from_millis(ms);
-            thread::sleep(ten_millis);
-        }).join();
+        unsafe {
+            sleep((ms as u32)/ 1000);
+        }
     }
 }
