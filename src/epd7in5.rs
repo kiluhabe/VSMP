@@ -173,6 +173,12 @@ impl EPD {
     pub fn get_frame_buffer(&self, image: GrayImage) -> Vec<u8>{
         let buffer_size: u32 = self.height * self.width / 8;
         let mut buffer: Vec<u8> = Vec::with_capacity(buffer_size as usize);
+        unsafe {
+            buffer.set_len(buffer_size as usize);
+        }
+        for _i in 0..buffer_size {
+            buffer.push(0x00);
+        }
 
         if image.height() != self.height || image.width() != self.width {
             panic!(VSMPError::ImageSize);
