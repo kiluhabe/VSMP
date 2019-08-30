@@ -47,7 +47,7 @@ RUN cargo build --release
 #
 # RUN rm -rf target/release/foo-bar target/release/deps/foo_bar-*
 #                              ^                           ^
-RUN rm -rf target/release/hello* target/release/deps/hello-*
+RUN rm -rf target/release/main* target/release/deps/main-*
 
 ################################################################################
 # Builder
@@ -78,10 +78,10 @@ FROM base
 WORKDIR /app
 
 # Copy binary from builder image
-COPY --from=builder /build/app/target/release/hello .
+COPY --from=builder /build/app/target/release/main .
 
 # Copy other folders required by the application. Example:
 # COPY --from=builder /build/app/assets assets
 
 # Launch application
-CMD ["./hello", "rpi"]
+CMD ["./main"]
