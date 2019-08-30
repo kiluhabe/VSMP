@@ -52,7 +52,9 @@ impl EPDInterface {
         Ok(())
     }
     pub fn sleep_ms(&self, ms: u64) {
-        let ten_millis = time::Duration::from_millis(ms);
-        thread::sleep(ten_millis);
+        let _ = thread::spawn(move || {
+            let ten_millis = time::Duration::from_millis(ms);
+            thread::sleep(ten_millis);
+        }).join();
     }
 }
