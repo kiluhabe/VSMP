@@ -172,6 +172,7 @@ impl EPD {
     }
     pub fn get_frame_buffer(&self, image: GrayImage) -> Vec<u8>{
         let buffer_size: u32 = self.height * self.width / 8;
+        println!("{}", buffer_size);
         let mut buffer: Vec<u8> = Vec::with_capacity(buffer_size as usize);
 
         if image.height() != self.height || image.width() != self.width {
@@ -182,6 +183,7 @@ impl EPD {
             for x in 0..self.width {
                 if image.get_pixel(x, y) == &Luma([0u8]) {
                     let address = ((x + y * self.width) / 8) as usize;
+                    println!("{}", address);
                     buffer[address] |= 0x80 >> (x % 8);
                 }
             }
