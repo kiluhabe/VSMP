@@ -41,7 +41,7 @@ fn get_image_buffer(path_str: &str, width: u32, height: u32) -> Result<Vec<u8>, 
         .to_luma()
         .to_vec()
         .into_iter().map(|e| {
-            if e > 0 { 0x03 } else { 0x00 }
+            if e == 255 { 0x03 } else { e }
         })
         .collect();
     Ok(buffer)
