@@ -86,24 +86,25 @@ impl EPD {
     }
     pub fn display_frame(&mut self, buffer: &[u8]) -> Result<(), VSMPError>{
         self.send_command(Command::DataStartTransmission1)?;
-        for i in 0..(self.width / 8 * self.height) {
-            for _ in 1..4 {
-                let mut temp1 = buffer[i as usize];
-                let mut temp2 = if (temp1 & 0x80) > 0 {
-                    0x03
-                } else {
-                    0x00
-                };
-                temp2 <<= 4;
-                temp1 <<=1;
-                temp2 |= if (temp1 & 0x80) > 0 {
-                    0x03
-                } else {
-                    0x00
-                };
-                self.send_data(&[temp2])?;
-            }
-        }
+        self.send_data(buffer)?;
+        // for i in 0..(self.width / 8 * self.height) {
+        //     for _ in 1..4 {
+        //         let mut temp1 = buffer[i as usize];
+        //         let mut temp2 = if (temp1 & 0x80) > 0 {
+        //             0x03
+        //         } else {
+        //             0x00
+        //         };
+        //         temp2 <<= 4;
+        //         temp1 <<=1;
+        //         temp2 |= if (temp1 & 0x80) > 0 {
+        //             0x03
+        //         } else {
+        //             0x00
+        //         };
+        //         self.send_data(&[temp2])?;
+        //     }
+        // }
         self.send_command(Command::DisplayRefresh)?;
         self.sleep(100);
         self.wait_until_idle()?;

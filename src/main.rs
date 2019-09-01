@@ -40,7 +40,7 @@ fn get_image_buffer(path_str: &str, width: u32, height: u32) -> Result<Vec<u8>, 
 }
 
 fn main() -> Result<(), VSMPError> {
-    let mut epd = init_epd(192, 320);
+    let mut epd = init_epd(384, 640);
     let buffer = get_image_buffer(
         "/tmp/vsmp/images/sample.bmp", epd.width, epd.height)?;
 
