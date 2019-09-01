@@ -4,10 +4,12 @@ extern crate image;
 mod epd_interface;
 mod errors;
 mod epd7in5;
+mod pin;
+mod command;
 
 use rppal::spi::{Spi, Mode, Bus, SlaveSelect};
 use rppal::gpio::Gpio;
-use image::{FilterType, GrayImage};
+use image::FilterType;
 use std::path::Path;
 
 use epd_interface::EPDInterface;

@@ -1,95 +1,10 @@
 use rppal::gpio::{Level};
-use image::{GrayImage,Luma};
 use std::{thread, time};
 
-use crate::epd_interface::{EPDInterface, PinNumber};
+use crate::epd_interface::EPDInterface;
+use crate::pin::PinNumber;
 use crate::errors::VSMPError;
-
-pub enum Command {
-    PanelSetting,
-    PowerSetting,
-    PowerOff,
-    PowerOffSequenceSetting,
-    PowerOn,
-    PowerOnMeasure,
-    BoosterSoftStart,
-    DeepSleep,
-    DataStartTransmission1,
-    DataStop,
-    DisplayRefresh,
-    ImageProcess,
-    LUTForVCOM,
-    LUTBlue,
-    LUTWhite,
-    LUTGray1,
-    LUTGray2,
-    LUTRed0,
-    LUTRed1,
-    LUTRed2,
-    LUTRed3,
-    LUTXon,
-    PLLControl,
-    TemperatureSensorCommand,
-    TemperatureCalibration,
-    TemperatureSensorWrite,
-    TemperatureSensorRead,
-    VCOMAndDataIntervalSetting,
-    LowPowerDetection,
-    TCONSetting,
-    TCONResolution,
-    SPIFlashControl,
-    Revision,
-    GetStatus,
-    AutoMeasurementVCOM,
-    ReadVCOMValue,
-    VCMDCSetting,
-    FlashMode,
-}
-
-impl Command {
-    fn value(&self) -> u8 {
-        match *self {
-            Command::PanelSetting                               => 0x00,
-            Command::PowerSetting                               => 0x01,
-            Command::PowerOff                                => 0x02,
-            Command::PowerOffSequenceSetting                  => 0x03,
-            Command::PowerOn                                    => 0x04,
-            Command::PowerOnMeasure                            => 0x05,
-            Command::BoosterSoftStart                          => 0x06,
-            Command::DeepSleep                            => 0x07,
-            Command::DataStartTransmission1                   => 0x10,
-            Command::DataStop                                   => 0x11,
-            Command::DisplayRefresh                             => 0x12,
-            Command::ImageProcess                              => 0x13,
-            Command::LUTForVCOM                                => 0x20,
-            Command::LUTBlue                                  => 0x21,
-            Command::LUTWhite                                   => 0x22,
-            Command::LUTGray1                                  => 0x23,
-            Command::LUTGray2                                  => 0x24,
-            Command::LUTRed0                                   => 0x25,
-            Command::LUTRed1                                   => 0x26,
-            Command::LUTRed2                                   => 0x27,
-            Command::LUTRed3                                   => 0x28,
-            Command::LUTXon                                     => 0x29,
-            Command::PLLControl                                 => 0x30,
-            Command::TemperatureSensorCommand                  => 0x40,
-            Command::TemperatureCalibration                     => 0x41,
-            Command::TemperatureSensorWrite                    => 0x42,
-            Command::TemperatureSensorRead                     => 0x43,
-            Command::VCOMAndDataIntervalSetting              => 0x50,
-            Command::LowPowerDetection                         => 0x51,
-            Command::TCONSetting                                => 0x60,
-            Command::TCONResolution                             => 0x61,
-            Command::SPIFlashControl                           => 0x65,
-            Command::Revision                                    => 0x70,
-            Command::GetStatus                                  => 0x71,
-            Command::AutoMeasurementVCOM                       => 0x80,
-            Command::ReadVCOMValue                             => 0x81,
-            Command::VCMDCSetting                              => 0x82,
-            Command::FlashMode                                 => 0xe5,
-        }
-    }
-}
+use crate::command::Command;
 
 pub struct EPD {
     pub height: u32,
@@ -171,52 +86,24 @@ impl EPD {
 
         Ok(())
     }
-    pub fn get_frame_buffer(&self, image: &GrayImage) -> Vec<u8>{
-        let buffer_size: u32 = self.height * self.width / 8;
-        let mut buffer: Vec<u8> = Vec::with_capacity(buffer_size as usize);
-        unsafe {
-            buffer.set_len(buffer_size as usize);
-        }
-        for _i in 0..buffer_size {
-            buffer.push(0x00);
-        }
-
-        if image.height() != self.height || image.width() != self.width {
-            panic!(VSMPError::ImageSize);
-        }
-
-        for y in 0..self.height {
-            for x in 0..self.width {
-                if image.get_pixel(x, y) == &Luma([0u8]) {
-                    let address = ((x + y * self.width) / 8) as usize;
-                    buffer[address] |= 0x80 >> (x % 8);
-                }
-            }
-        }
-        return buffer
-    }
     pub fn display_frame(&mut self, buffer: &[u8]) -> Result<(), VSMPError>{
         self.send_command(Command::DataStartTransmission1)?;
-        for i in 0..30720 {
-            let mut temp1 = buffer[i];
-            let mut j = 0;
-            while j < 8 {
-                let mut temp2: u8 = if (temp1 & 0x80) > 0 {
+        for i in 0..(self.width / 8 * self.height) {
+            for _ in 1..4 {
+                let mut temp1 = buffer[i as usize];
+                let mut temp2 = if (temp1 & 0x80) > 0 {
                     0x03
                 } else {
                     0x00
                 };
-                temp2 = (temp2 << 4) & 0xFF;
-                temp1 = (temp1 << 1) & 0xFF;
-                j += 1;
+                temp2 <<= 4;
+                temp1 <<=1;
                 temp2 |= if (temp1 & 0x80) > 0 {
                     0x03
                 } else {
                     0x00
                 };
-                temp1 = (temp1 << 1) & 0xFF;
                 self.send_data(&[temp2])?;
-                j += 1
             }
             self.send_command(Command::DisplayRefresh)?;
             self.sleep(100);
