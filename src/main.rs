@@ -38,6 +38,7 @@ fn get_image_buffer(path_str: &str, width: u32, height: u32) -> Result<Vec<u8>, 
         width / 2, height, FilterType::Lanczos3);
     let buffer = resized_image
         .grayscale()
+        .adjust_contrast(50.0)
         .to_luma()
         .to_vec()
         .into_iter().map(|e| {
