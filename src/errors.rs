@@ -1,8 +1,7 @@
-extern crate rppal;
-
 use rppal::{gpio, spi};
 use std::fmt;
 use std::error;
+use image::ImageError;
 
 #[derive(Debug, Clone)]
 pub struct ImageSizeError;
@@ -23,8 +22,8 @@ impl error::Error for ImageSizeError {
 pub enum VSMPError {
     Gpio(gpio::Error),
     Spi(spi::Error),
-    ImageSize(ImageSizeError)
-
+    ImageSize(ImageSizeError),
+    Image(ImageError)
 }
 
 impl From<gpio::Error> for VSMPError {
@@ -42,5 +41,11 @@ impl From<spi::Error> for VSMPError {
 impl From<ImageSizeError> for VSMPError {
     fn from(err: ImageSizeError) -> VSMPError {
         VSMPError::ImageSize(err)
+    }
+}
+
+impl From<ImageError> for VSMPError {
+    fn from(err: ImageError) -> VSMPError {
+        VSMPError::Image(err)
     }
 }

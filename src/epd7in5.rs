@@ -1,8 +1,6 @@
-extern crate rppal;
-extern crate image;
-
 use rppal::gpio::{Level};
 use image::{GrayImage,Luma};
+use std::{thread, time};
 
 use crate::epd_interface::{EPDInterface, PinNumber};
 use crate::errors::VSMPError;
@@ -110,16 +108,19 @@ impl EPD {
         self.interface.spi_write(data)?;
         Ok(())
     }
+    fn sleep(&self, ms: u64) {
+        thread::sleep(time::Duration::from_millis(ms));
+    }
     fn reset(&self) -> Result<(), VSMPError>{
         self.interface.write(PinNumber::RSTPin, Level::Low)?;
-        self.interface.sleep_ms(200);
+        self.sleep(200);
         self.interface.write(PinNumber::RSTPin, Level::High)?;
-        self.interface.sleep_ms(200);
+        self.sleep(200);
         Ok(())
     }
     fn wait_until_idle(&self) -> Result<(), VSMPError>{
         while self.interface.read(PinNumber::BUSYPin)? == Level::Low {
-            self.interface.sleep_ms(100)
+            self.sleep(100);
         }
         Ok(())
     }
@@ -170,7 +171,7 @@ impl EPD {
 
         Ok(())
     }
-    pub fn get_frame_buffer(&self, image: GrayImage) -> Vec<u8>{
+    pub fn get_frame_buffer(&self, image: &GrayImage) -> Vec<u8>{
         let buffer_size: u32 = self.height * self.width / 8;
         let mut buffer: Vec<u8> = Vec::with_capacity(buffer_size as usize);
         unsafe {
@@ -218,16 +219,9 @@ impl EPD {
                 j += 1
             }
             self.send_command(Command::DisplayRefresh)?;
-            self.interface.sleep_ms(100);
+            self.sleep(100);
             self.wait_until_idle()?;
         }
-        Ok(())
-    }
-    pub fn sleep(&mut self) -> Result<(), VSMPError> {
-        self.send_command(Command::PowerOff)?;
-        self.wait_until_idle()?;
-        self.send_command(Command::DeepSleep)?;
-        self.send_data(&[0xa5])?;
         Ok(())
     }
 }

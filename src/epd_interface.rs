@@ -1,10 +1,6 @@
-extern crate rppal;
-extern crate libc;
-
+use std::{thread, time};
 use rppal::gpio::{Gpio, Level};
 use rppal::spi::{Spi};
-use std::{thread, time};
-use libc::sleep;
 
 use crate::errors::VSMPError;
 
@@ -52,10 +48,5 @@ impl EPDInterface {
     pub fn spi_write(&mut self, data: &[u8]) -> Result<(), VSMPError> {
         self.spi.write(data)?;
         Ok(())
-    }
-    pub fn sleep_ms(&self, ms: u64) {
-        unsafe {
-            sleep((ms as u32)/ 1000);
-        }
     }
 }

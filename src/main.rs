@@ -1,4 +1,5 @@
 extern crate rppal;
+extern crate image;
 
 mod epd_interface;
 mod errors;
@@ -6,38 +7,36 @@ mod epd7in5;
 
 use rppal::spi::{Spi, Mode, Bus, SlaveSelect};
 use rppal::gpio::Gpio;
-use image::{ImageBuffer, Luma};
-use std::thread;
+use image::{FilterType, GrayImage};
+use std::path::Path;
 
 use epd_interface::EPDInterface;
 use epd7in5::EPD;
 use errors::VSMPError;
 
-fn main() -> Result<(), VSMPError> {
+fn init_epd(height: u32, width: u32) -> EPD {
     let gpio = Gpio::new().unwrap();
     let spi = Spi::new(Bus::Spi0, SlaveSelect::Ss0, 2000000, Mode::Mode0).unwrap();
 
     let epd_interface = EPDInterface {
         gpio: gpio, spi: spi
     };
-    let mut epd = EPD {
-        height: 384,
-        width: 640,
+    return EPD {
+        height: height,
+        width: width,
         interface: epd_interface
     };
+}
 
-    let img = ImageBuffer::from_fn(640, 384, |x, y| {
-        if x % 2 == 0 {
-            Luma([0u8])
-        } else {
-            Luma([255u8])
-        }
-    });
-    let buffer = epd.get_frame_buffer(img);
+fn main() -> Result<(), VSMPError> {
+    let mut epd = init_epd(384, 640);
 
+    let image_path = Path::new("/tmp/vsmp/images/sample.bmp");
+    let img = image::open(&image_path)?;
+    let resized_image = img.resize(epd.width, epd.height, FilterType::Lanczos3);
+    let buffer = epd.get_frame_buffer(resized_image.as_luma8().unwrap());
     epd.init()?;
     epd.display_frame(&buffer)?;
-    epd.interface.sleep_ms(10000);
 
     Ok(())
 }
