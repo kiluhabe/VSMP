@@ -40,8 +40,6 @@ impl EPD {
         Ok(())
     }
     pub fn init(&mut self) -> Result<(), VSMPError>{
-        self.interface.init()?;
-
         self.reset()?;
 
         self.send_command(Command::PowerSetting)?;

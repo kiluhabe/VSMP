@@ -44,8 +44,8 @@ fn main() -> Result<(), VSMPError> {
 
     println!("{}", "initting...");
     epd.init()?;
-    println!("{}", "rendering...");
-    epd.display_frame(&buffer)?;
+    // println!("{}", "rendering...");
+    // epd.display_frame(&buffer)?;
     println!("{}", "done.");
 
     Ok(())
