@@ -34,7 +34,8 @@ fn init_epd(height: u32, width: u32) -> EPD {
 fn get_image_buffer(path_str: &str, width: u32, height: u32) -> Result<Vec<u8>, VSMPError> {
     let image_path = Path::new(path_str);
     let img = image::open(&image_path)?;
-    let resized_image = img.resize_exact(width / 2, height, FilterType::Lanczos3);
+    let resized_image = img.resize_to_fill(
+        width / 2, height, FilterType::Lanczos3);
     let buffer = resized_image
         .grayscale()
         .to_luma()
@@ -57,7 +58,7 @@ fn blank(width: usize, height: usize) -> Vec<u8> {
 fn main() -> Result<(), VSMPError> {
     let mut epd = init_epd(384, 640);
     let buffer = get_image_buffer(
-        "/tmp/vsmp/images/sample.bmp", epd.width, epd.height)?;
+        "/tmp/vsmp/images/sample.jpg", epd.width, epd.height)?;
 
     println!("{}", "initting...");
     epd.init()?;
