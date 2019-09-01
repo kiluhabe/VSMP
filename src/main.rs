@@ -42,8 +42,11 @@ fn main() -> Result<(), VSMPError> {
     let buffer = get_image_buffer(
         "/tmp/vsmp/images/sample.bmp", epd.width, epd.height)?;
 
+    println!("{}", "initting...");
     epd.init()?;
+    println!("{}", "rendering...");
     epd.display_frame(&buffer)?;
+    println!("{}", "done.");
 
     Ok(())
 }
