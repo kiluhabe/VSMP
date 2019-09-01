@@ -35,9 +35,6 @@ fn get_image_buffer(path_str: &str, width: u32, height: u32) -> Result<Vec<u8>, 
     let img = image::open(&image_path)?;
     let resized_image = img.resize(width, height, FilterType::Lanczos3);
     let buffer = resized_image.grayscale().to_luma().to_vec();
-    for i in 0..10 {
-        println!("{}", buffer[i])
-    }
     Ok(buffer)
 }
 
