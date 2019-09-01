@@ -42,7 +42,7 @@ fn get_image_buffer(path_str: &str, width: u32, height: u32) -> Result<Vec<u8>, 
 fn blank(width: usize, height: usize) -> Vec<u8> {
     let mut buffer = Vec::with_capacity(width * height /2);
     for _ in 1..(width * height / 2) {
-        buffer.push(0xFF);
+        buffer.push(0x03);
     };
     return buffer
 }
