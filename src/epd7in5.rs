@@ -103,10 +103,10 @@ impl EPD {
                 };
                 self.send_data(&[temp2])?;
             }
-            self.send_command(Command::DisplayRefresh)?;
-            self.sleep(100);
-            self.wait_until_idle()?;
         }
+        self.send_command(Command::DisplayRefresh)?;
+        self.sleep(100);
+        self.wait_until_idle()?;
         Ok(())
     }
 }
