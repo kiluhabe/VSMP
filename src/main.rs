@@ -32,7 +32,8 @@ fn init_epd(height: u32, width: u32) -> EPD {
 
 fn get_image_buffer(path_str: &str, width: u32, height: u32) -> Result<Vec<u8>, VSMPError> {
     let image_path = Path::new(path_str);
-    let img = image::open(&image_path)?;
+    let mut img = image::open(&image_path)?;
+    img.invert();
     let resized_image = img.resize(width, height, FilterType::Lanczos3);
     let buffer = resized_image.grayscale().to_luma().to_vec();
     Ok(buffer)
