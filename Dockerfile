@@ -79,7 +79,7 @@ WORKDIR /app
 
 # Copy binary from builder image
 COPY --from=builder /build/app/target/release/vsmp .
-COPY ./sample.jpg /tmp/vsmp/images/sample.jpg
+COPY ./sample.png /tmp/vsmp/images/sample.png
 
 # Copy other folders required by the application. Example:
 # COPY --from=builder /build/app/assets assets

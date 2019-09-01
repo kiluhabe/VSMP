@@ -58,7 +58,7 @@ fn blank(width: usize, height: usize) -> Vec<u8> {
 fn main() -> Result<(), VSMPError> {
     let mut epd = init_epd(384, 640);
     let buffer = get_image_buffer(
-        "/tmp/vsmp/images/sample.jpg", epd.width, epd.height)?;
+        "/tmp/vsmp/images/sample.png", epd.width, epd.height)?;
 
     println!("{}", "initting...");
     epd.init()?;
