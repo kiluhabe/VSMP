@@ -11,6 +11,7 @@ use rppal::spi::{Spi, Mode, Bus, SlaveSelect};
 use rppal::gpio::Gpio;
 use image::FilterType;
 use std::path::Path;
+use std::{thread, time};
 
 use epd_interface::EPDInterface;
 use epd7in5::EPD;
@@ -38,13 +39,21 @@ fn get_image_buffer(path_str: &str, width: u32, height: u32) -> Result<Vec<u8>, 
     Ok(buffer)
 }
 
+fn blank(width: usize, height: usize) -> Vec<u8> {
+    let mut buffer = Vec::with_capacity(width * height /2);
+    for _ in 1..(width * height / 2) {
+        buffer.push(0xFF);
+    };
+    return buffer
+}
+
 fn main() -> Result<(), VSMPError> {
     let mut epd = init_epd(384, 640);
-    let buffer = get_image_buffer(
-        "/tmp/vsmp/images/sample.bmp", epd.width, epd.height)?;
+    let buffer = blank(epd.width as usize, epd.height as usize);
 
     println!("{}", "initting...");
     epd.init()?;
+    thread::sleep(time::Duration::from_millis(200));
     println!("{}", "rendering...");
     epd.display_frame(&buffer)?;
     println!("{}", "done.");
