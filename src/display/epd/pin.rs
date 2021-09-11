@@ -3,7 +3,7 @@ pub enum PinNumber {
     DCPin,
     CSPin,
     BUSYPin,
-    BCMPin
+    BCMPin,
 }
 
 impl PinNumber {
@@ -13,7 +13,7 @@ impl PinNumber {
             PinNumber::DCPin => 25,
             PinNumber::CSPin => 8,
             PinNumber::BUSYPin => 24,
-            PinNumber::BCMPin => 18
+            PinNumber::BCMPin => 18,
         }
     }
 }

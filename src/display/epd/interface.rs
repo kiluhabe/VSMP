@@ -1,17 +1,28 @@
 use rppal::gpio::{Gpio, Level};
-use rppal::spi::{Spi};
+use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
 
-use crate::pin::PinNumber;
+use super::pin::PinNumber;
 use crate::errors::VSMPError;
 
-pub struct EPDInterface {
+pub struct Interface {
     pub spi: Spi,
-    pub gpio: Gpio
+    pub gpio: Gpio,
 }
 
-impl EPDInterface {
+impl Interface {
+    pub fn default() -> Result<Self, VSMPError> {
+        let gpio = Gpio::new()?;
+        let spi = Spi::new(Bus::Spi0, SlaveSelect::Ss0, 2000000, Mode::Mode0)?;
+        Ok(Self {
+            spi: spi,
+            gpio: gpio,
+        })
+    }
     pub fn write(&self, pin_number: PinNumber, level: Level) -> Result<(), VSMPError> {
-        self.gpio.get(pin_number.value())?.into_output().write(level);
+        self.gpio
+            .get(pin_number.value())?
+            .into_output()
+            .write(level);
         Ok(())
     }
     pub fn read(&self, pin_number: PinNumber) -> Result<Level, VSMPError> {

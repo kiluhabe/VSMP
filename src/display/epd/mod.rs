@@ -1,24 +1,37 @@
-use rppal::gpio::{Level};
+mod command;
+mod interface;
+mod pin;
+
+use rppal::gpio::Level;
 use std::{thread, time};
 
-use crate::epd_interface::EPDInterface;
-use crate::pin::PinNumber;
+use crate::display::Displayable;
 use crate::errors::VSMPError;
-use crate::command::Command;
+use command::Command;
+use interface::Interface;
+use pin::PinNumber;
 
 pub struct EPD {
     pub height: u32,
     pub width: u32,
-    pub interface: EPDInterface
+    pub interface: Interface,
 }
 
 impl EPD {
+    pub fn default(height: u32, width: u32) -> Result<Self, VSMPError> {
+        let interface = Interface::default()?;
+        Ok(EPD {
+            height: height,
+            width: width,
+            interface: interface,
+        })
+    }
     fn send_command(&mut self, command: Command) -> Result<(), VSMPError> {
         self.interface.write(PinNumber::DCPin, Level::Low)?;
         self.interface.spi_write(&[command.value()])?;
         Ok(())
     }
-    fn send_data(&mut self, data: &[u8]) -> Result<(), VSMPError>{
+    fn send_data(&mut self, data: &[u8]) -> Result<(), VSMPError> {
         self.interface.write(PinNumber::DCPin, Level::High)?;
         self.interface.spi_write(data)?;
         Ok(())
@@ -26,20 +39,20 @@ impl EPD {
     fn sleep(&self, ms: u64) {
         thread::sleep(time::Duration::from_millis(ms));
     }
-    fn reset(&self) -> Result<(), VSMPError>{
+    fn reset(&self) -> Result<(), VSMPError> {
         self.interface.write(PinNumber::RSTPin, Level::Low)?;
         self.sleep(200);
         self.interface.write(PinNumber::RSTPin, Level::High)?;
         self.sleep(200);
         Ok(())
     }
-    fn wait_until_idle(&self) -> Result<(), VSMPError>{
+    fn wait_until_idle(&self) -> Result<(), VSMPError> {
         while self.interface.read(PinNumber::BUSYPin)? == Level::Low {
             self.sleep(100);
         }
         Ok(())
     }
-    pub fn init(&mut self) -> Result<(), VSMPError>{
+    pub fn init(&mut self) -> Result<(), VSMPError> {
         self.reset()?;
 
         self.send_command(Command::PowerSetting)?;
@@ -84,29 +97,16 @@ impl EPD {
 
         Ok(())
     }
-    pub fn display_frame(&mut self, buffer: &[u8]) -> Result<(), VSMPError>{
+}
+
+impl Displayable for EPD {
+    fn display(&mut self, buffer: &[u8]) -> Result<(), VSMPError> {
+        self.init()?;
+        thread::sleep(time::Duration::from_millis(200));
         self.send_command(Command::DataStartTransmission1)?;
         for i in buffer {
             self.send_data(&[*i])?;
         }
-        // for i in 0..(self.width / 8 * self.height) {
-        //     for _ in 1..4 {
-        //         let mut temp1 = buffer[i as usize];
-        //         let mut temp2 = if (temp1 & 0x80) > 0 {
-        //             0x03
-        //         } else {
-        //             0x00
-        //         };
-        //         temp2 <<= 4;
-        //         temp1 <<=1;
-        //         temp2 |= if (temp1 & 0x80) > 0 {
-        //             0x03
-        //         } else {
-        //             0x00
-        //         };
-        //         self.send_data(&[temp2])?;
-        //     }
-        // }
         self.send_command(Command::DisplayRefresh)?;
         self.sleep(100);
         self.wait_until_idle()?;

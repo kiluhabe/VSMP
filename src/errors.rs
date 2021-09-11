@@ -1,7 +1,7 @@
-use rppal::{gpio, spi};
-use std::fmt;
-use std::error;
 use image::ImageError;
+use rppal::{gpio, spi};
+use std::error;
+use std::fmt;
 
 #[derive(Debug, Clone)]
 pub struct ImageSizeError;
@@ -23,7 +23,7 @@ pub enum VSMPError {
     Gpio(gpio::Error),
     Spi(spi::Error),
     ImageSize(ImageSizeError),
-    Image(ImageError)
+    Image(ImageError),
 }
 
 impl From<gpio::Error> for VSMPError {
