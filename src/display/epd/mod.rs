@@ -3,27 +3,29 @@ mod interface;
 mod pin;
 
 use rppal::gpio::Level;
+
+use std::path::Path;
 use std::{thread, time};
 
 use crate::display::Displayable;
 use crate::errors::VSMPError;
+use crate::image_converter::ImageConverter;
 use command::Command;
 use interface::Interface;
 use pin::PinNumber;
 
 pub struct EPD {
-    pub height: u32,
-    pub width: u32,
-    pub interface: Interface,
+    interface: Interface,
+    image_converter: ImageConverter,
 }
 
 impl EPD {
-    pub fn default(height: u32, width: u32) -> Result<Self, VSMPError> {
+    pub fn default() -> Result<Self, VSMPError> {
         let interface = Interface::default()?;
+        let image_converter = ImageConverter {};
         Ok(EPD {
-            height: height,
-            width: width,
             interface: interface,
+            image_converter: image_converter,
         })
     }
     fn send_command(&mut self, command: Command) -> Result<(), VSMPError> {
@@ -100,12 +102,13 @@ impl EPD {
 }
 
 impl Displayable for EPD {
-    fn display(&mut self, buffer: &[u8]) -> Result<(), VSMPError> {
+    fn display(&mut self, path: &Path, height: u32, width: u32) -> Result<(), VSMPError> {
+        let buffer = self.image_converter.convert(path, height, width)?;
         self.init()?;
         thread::sleep(time::Duration::from_millis(200));
         self.send_command(Command::DataStartTransmission1)?;
         for i in buffer {
-            self.send_data(&[*i])?;
+            self.send_data(&[i])?;
         }
         self.send_command(Command::DisplayRefresh)?;
         self.sleep(100);
