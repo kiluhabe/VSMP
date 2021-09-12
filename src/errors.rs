@@ -22,21 +22,6 @@ impl error::Error for ImageSizeError {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct SerdeJSONCastError;
-
-impl fmt::Display for SerdeJSONCastError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "failed to casting.")
-    }
-}
-
-impl error::Error for SerdeJSONCastError {
-    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
-        None
-    }
-}
-
 #[derive(Debug)]
 pub enum VSMPError {
     Gpio(gpio::Error),

@@ -11,7 +11,6 @@ mod image_converter;
 use std::path::Path;
 
 use display::terminal::Terminal;
-use display::Displayable;
 use errors::VSMPError;
 
 fn main() -> Result<(), VSMPError> {
