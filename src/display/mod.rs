@@ -1,4 +1,5 @@
 pub mod epd;
+pub mod terminal;
 
 use std::path::Path;
 

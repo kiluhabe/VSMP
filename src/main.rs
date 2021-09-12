@@ -1,5 +1,8 @@
 extern crate image;
 extern crate rppal;
+extern crate serde;
+extern crate serde_json;
+extern crate uuid;
 
 mod display;
 mod errors;
@@ -7,16 +10,16 @@ mod image_converter;
 
 use std::path::Path;
 
-use display::epd::EPD;
+use display::terminal::Terminal;
 use display::Displayable;
 use errors::VSMPError;
 
 fn main() -> Result<(), VSMPError> {
-    let mut epd = EPD::default()?;
-    let path = Path::new("/tmp/vsmp/images/sample.png");
+    let path = Path::new("/home/kiluhabe/codes/VSMP/sample.png");
 
-    epd.display(&path, 384, 640)?;
-    println!("{}", "done.");
+    let mut term = Terminal::Ueberzug.default();
+
+    term.display(&path, 384, 640)?;
 
     Ok(())
 }
