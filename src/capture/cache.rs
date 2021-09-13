@@ -29,16 +29,11 @@ impl Cache {
         fs::create_dir(cache_dir.clone())?;
         Ok(Box::from(cache_dir.clone()))
     }
-    pub fn purge(&self, key: &str) -> Result<(), VSMPError> {
-        let cache_dir = self.path.join(key);
-        for entry in cache_dir.read_dir()? {
-            fs::remove_file(entry?.path())?
+    pub fn purge(&self) -> Result<(), VSMPError> {
+        for entry in self.path.read_dir()? {
+            let dir = entry?.path();
+            fs::remove_dir_all(dir.clone())?;
         }
-        Ok(())
-    }
-    pub fn delete_dir(&self, key: &str) -> Result<(), VSMPError> {
-        let cache_dir = self.path.join(key);
-        fs::remove_dir_all(cache_dir)?;
         Ok(())
     }
 }

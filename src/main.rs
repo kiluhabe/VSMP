@@ -5,36 +5,33 @@ extern crate serde;
 extern crate serde_json;
 extern crate uuid;
 
-mod cache;
+mod capture;
 mod display;
 mod errors;
-mod ffmpeg;
-mod image_converter;
 
 use std::path::Path;
 
-use cache::Cache;
+use capture::Capture;
 use display::terminal::Terminal;
 use errors::VSMPError;
-use ffmpeg::FFmpeg;
 
 fn main() -> Result<(), VSMPError> {
+    let speed = 0.5;
+    let fps = 24f32;
     let src = Path::new("/home/kiluhabe/codes/VSMP/sample.mkv");
-    let key = src.file_stem().unwrap().to_str().unwrap();
+    let interval = 1f32 / fps / speed;
 
+    let capture = Capture::default()?;
     let mut term = Terminal::Ueberzug.default();
-    let ffmpeg = FFmpeg {};
-    let cache = Cache::default()?;
 
-    cache.init()?;
-    let dist = cache.create_dir(key)?;
+    capture.clean()?;
+    let thumbnails = capture.capture(src, fps)?;
 
-    for duration in 1..100 {
-        let thumbnail = ffmpeg.capture(src, &dist, duration)?;
-        term.display(&thumbnail, 100, 100)?;
-        cache.purge(key)?;
+    for thumbnail in thumbnails {
+        term.display(&thumbnail, 100, 100, interval as u32)?;
     }
-    cache.delete_dir(key)?;
+
+    capture.clean()?;
 
     Ok(())
 }

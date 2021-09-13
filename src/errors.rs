@@ -5,6 +5,7 @@ use serde_json;
 use std::error;
 use std::fmt;
 use std::io;
+use std::num::ParseFloatError;
 use std::string;
 
 #[derive(Debug, Clone)]
@@ -47,6 +48,7 @@ pub enum VSMPError {
     IO(io::Error),
     FromUtf8(string::FromUtf8Error),
     CacheDir(CacheDirError),
+    ParseFloat(ParseFloatError),
 }
 
 impl From<gpio::Error> for VSMPError {
@@ -94,5 +96,11 @@ impl From<string::FromUtf8Error> for VSMPError {
 impl From<CacheDirError> for VSMPError {
     fn from(err: CacheDirError) -> VSMPError {
         VSMPError::CacheDir(err)
+    }
+}
+
+impl From<ParseFloatError> for VSMPError {
+    fn from(err: ParseFloatError) -> VSMPError {
+        VSMPError::ParseFloat(err)
     }
 }

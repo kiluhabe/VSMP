@@ -67,11 +67,7 @@ impl Ueberzug {
             identifier: identifier,
         }
     }
-    fn command(
-        &self,
-        config: Box<dyn Formattable>,
-        duration: time::Duration,
-    ) -> Result<(), VSMPError> {
+    fn command(&self, config: Box<dyn Formattable>) -> Result<(), VSMPError> {
         let layer = Command::new("ueberzug")
             .args(&["layer", "-p", "json"])
             .stdin(Stdio::piped())
@@ -82,26 +78,29 @@ impl Ueberzug {
             .as_ref()
             .unwrap()
             .write_all(config.format()?.as_bytes())?;
-        thread::sleep(duration);
         Ok(())
     }
 }
 
 impl Displayable for Ueberzug {
-    fn display(&mut self, path: &Path, height: u32, width: u32) -> Result<(), VSMPError> {
-        self.clone().command(
-            Box::from(UeberzugRemoveConfig::default(self.clone().identifier)),
-            time::Duration::from_secs(0),
-        )?;
-        self.clone().command(
-            Box::from(UeberzugAddConfig::default(
+    fn display(
+        &mut self,
+        path: &Path,
+        height: u32,
+        width: u32,
+        wait_millis: u32,
+    ) -> Result<(), VSMPError> {
+        self.clone()
+            .command(Box::from(UeberzugRemoveConfig::default(
                 self.clone().identifier,
-                path.to_string_lossy().to_string(),
-                height,
-                width,
-            )),
-            time::Duration::from_secs(5),
-        )?;
+            )))?;
+        self.clone().command(Box::from(UeberzugAddConfig::default(
+            self.clone().identifier,
+            path.to_string_lossy().to_string(),
+            height,
+            width,
+        )))?;
+        thread::sleep(time::Duration::from_millis(wait_millis as u64));
         Ok(())
     }
 }

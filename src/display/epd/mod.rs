@@ -7,9 +7,9 @@ use rppal::gpio::Level;
 use std::path::Path;
 use std::{thread, time};
 
+use crate::display::image_converter::ImageConverter;
 use crate::display::Displayable;
 use crate::errors::VSMPError;
-use crate::image_converter::ImageConverter;
 use command::Command;
 use interface::Interface;
 use pin::PinNumber;
@@ -38,8 +38,8 @@ impl EPD {
         self.interface.spi_write(data)?;
         Ok(())
     }
-    fn sleep(&self, ms: u64) {
-        thread::sleep(time::Duration::from_millis(ms));
+    fn sleep(&self, ms: u32) {
+        thread::sleep(time::Duration::from_millis(ms as u64));
     }
     fn reset(&self) -> Result<(), VSMPError> {
         self.interface.write(PinNumber::RSTPin, Level::Low)?;
@@ -102,10 +102,16 @@ impl EPD {
 }
 
 impl Displayable for EPD {
-    fn display(&mut self, path: &Path, height: u32, width: u32) -> Result<(), VSMPError> {
+    fn display(
+        &mut self,
+        path: &Path,
+        height: u32,
+        width: u32,
+        wait_millis: u32,
+    ) -> Result<(), VSMPError> {
         let buffer = self.image_converter.convert(path, height, width)?;
         self.init()?;
-        thread::sleep(time::Duration::from_millis(200));
+        self.sleep(200);
         self.send_command(Command::DataStartTransmission1)?;
         for i in buffer {
             self.send_data(&[i])?;
@@ -113,6 +119,7 @@ impl Displayable for EPD {
         self.send_command(Command::DisplayRefresh)?;
         self.sleep(100);
         self.wait_until_idle()?;
+        self.sleep(wait_millis);
         Ok(())
     }
 }
