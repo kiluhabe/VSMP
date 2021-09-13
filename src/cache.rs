@@ -6,7 +6,7 @@ use dirs;
 use crate::errors::{CacheDirError, VSMPError};
 
 pub struct Cache {
-    path: Box<Path>,
+    pub path: Box<Path>,
 }
 
 impl Cache {
@@ -24,15 +24,9 @@ impl Cache {
             Ok(())
         }
     }
-    pub fn create_dir(&self, key: &str) -> Result<Box<Path>, VSMPError> {
-        let cache_dir = self.path.join(key);
-        fs::create_dir(cache_dir.clone())?;
-        Ok(Box::from(cache_dir.clone()))
-    }
     pub fn purge(&self) -> Result<(), VSMPError> {
         for entry in self.path.read_dir()? {
-            let dir = entry?.path();
-            fs::remove_dir_all(dir.clone())?;
+            fs::remove_file(entry?.path())?;
         }
         Ok(())
     }

@@ -1,7 +1,7 @@
 use std::path::Path;
 use std::process::Command;
 
-use crate::capture::Analyzable;
+use crate::analyzer::Analyzable;
 use crate::errors::VSMPError;
 
 pub struct FFprobe;
