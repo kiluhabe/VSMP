@@ -22,6 +22,21 @@ impl error::Error for ImageSizeError {
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct CacheDirError;
+
+impl fmt::Display for CacheDirError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "home dir could not be found.")
+    }
+}
+
+impl error::Error for CacheDirError {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+        None
+    }
+}
+
 #[derive(Debug)]
 pub enum VSMPError {
     Gpio(gpio::Error),
@@ -31,6 +46,7 @@ pub enum VSMPError {
     SerdeJson(serde_json::Error),
     IO(io::Error),
     FromUtf8(string::FromUtf8Error),
+    CacheDir(CacheDirError),
 }
 
 impl From<gpio::Error> for VSMPError {
@@ -72,5 +88,11 @@ impl From<io::Error> for VSMPError {
 impl From<string::FromUtf8Error> for VSMPError {
     fn from(err: string::FromUtf8Error) -> VSMPError {
         VSMPError::FromUtf8(err)
+    }
+}
+
+impl From<CacheDirError> for VSMPError {
+    fn from(err: CacheDirError) -> VSMPError {
+        VSMPError::CacheDir(err)
     }
 }
