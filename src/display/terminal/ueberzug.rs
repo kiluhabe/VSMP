@@ -1,6 +1,6 @@
 use std::io::Write;
 use std::path::Path;
-use std::process::{Command, Stdio};
+use std::process::{Child, Command, Stdio};
 use std::{thread, time};
 
 use serde::{Deserialize, Serialize};
@@ -10,9 +10,9 @@ use uuid::Uuid;
 use crate::display::Displayable;
 use crate::errors::VSMPError;
 
-#[derive(Clone)]
 pub struct Ueberzug {
     identifier: String,
+    process: Child,
 }
 
 trait Formattable {
@@ -61,19 +61,20 @@ enum Scaler {
 }
 
 impl Ueberzug {
-    pub fn default() -> Self {
+    pub fn default() -> Result<Self, VSMPError> {
         let identifier = Uuid::new_v4().to_hyphenated().to_string();
-        Self {
-            identifier: identifier,
-        }
-    }
-    fn command(&self, config: Box<dyn Formattable>, wait: u32) -> Result<(), VSMPError> {
-        let layer = Command::new("ueberzug")
+        let process = Command::new("ueberzug")
             .args(&["layer", "-p", "json"])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .spawn()?;
-        layer
+        Ok(Self {
+            identifier: identifier,
+            process: process,
+        })
+    }
+    fn command(&self, config: Box<dyn Formattable>, wait: u32) -> Result<(), VSMPError> {
+        self.process
             .stdin
             .as_ref()
             .unwrap()
@@ -91,13 +92,10 @@ impl Displayable for Ueberzug {
         width: u32,
         wait_millis: u32,
     ) -> Result<(), VSMPError> {
-        self.clone().command(
-            Box::from(UeberzugRemoveConfig::default(self.clone().identifier)),
-            0,
-        )?;
-        self.clone().command(
+        let identifier = &self.identifier;
+        self.command(
             Box::from(UeberzugAddConfig::default(
-                self.clone().identifier,
+                identifier.to_string(),
                 path.to_string_lossy().to_string(),
                 height,
                 width,

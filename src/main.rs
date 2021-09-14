@@ -28,11 +28,12 @@ fn main() -> Result<(), VSMPError> {
     let analyzer = Analyzer::FFprobe.default();
     let cache = Cache::default()?;
     let capture = Capture::FFmpeg.default();
-    let mut term = Terminal::Ueberzug.default();
+    let mut term = Terminal::Ueberzug.default()?;
 
     let duration = analyzer.duration(src)?;
 
     cache.init()?;
+    cache.purge()?;
 
     let mut capture_point = 0f32;
     while capture_point <= duration {

@@ -1,6 +1,8 @@
 mod ueberzug;
 
 use crate::display::Displayable;
+use crate::errors::VSMPError;
+
 use ueberzug::Ueberzug;
 
 pub enum Terminal {
@@ -8,9 +10,9 @@ pub enum Terminal {
 }
 
 impl Terminal {
-    pub fn default(&self) -> Box<dyn Displayable> {
+    pub fn default(&self) -> Result<Box<dyn Displayable>, VSMPError> {
         match self {
-            Terminal::Ueberzug => Box::new(Ueberzug::default()),
+            Terminal::Ueberzug => Ok(Box::new(Ueberzug::default()?)),
         }
     }
 }
