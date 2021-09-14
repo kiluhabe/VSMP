@@ -4,12 +4,14 @@ mod pin;
 
 use rppal::gpio::Level;
 
+use std::fs;
 use std::path::Path;
 use std::{thread, time};
 
 use crate::display::image_converter::ImageConverter;
 use crate::display::Displayable;
 use crate::errors::VSMPError;
+
 use command::Command;
 use interface::Interface;
 use pin::PinNumber;
@@ -120,6 +122,10 @@ impl Displayable for EPD {
         self.sleep(100);
         self.wait_until_idle()?;
         self.sleep(wait_millis);
+        fs::remove_file(path)?;
         Ok(())
     }
 }
+
+unsafe impl Sync for EPD {}
+unsafe impl Send for EPD {}

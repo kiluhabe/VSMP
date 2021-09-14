@@ -15,7 +15,7 @@ pub enum Analyzer {
 }
 
 impl Analyzer {
-    pub fn default(&self) -> Box<dyn Analyzable> {
+    pub fn default(&self) -> Box<dyn Analyzable + Sync + Send> {
         match self {
             Analyzer::FFprobe => Box::new(FFprobe::default()),
         }

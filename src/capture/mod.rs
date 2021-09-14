@@ -15,7 +15,7 @@ pub enum Capture {
 }
 
 impl Capture {
-    pub fn default(&self) -> Box<dyn Capturable> {
+    pub fn default(&self) -> Box<dyn Capturable + Sync + Send> {
         match self {
             Capture::FFmpeg => Box::new(FFmpeg::default()),
         }

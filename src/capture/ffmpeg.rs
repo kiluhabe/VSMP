@@ -35,3 +35,6 @@ impl Capturable for FFmpeg {
         Ok(Box::from(dist))
     }
 }
+
+unsafe impl Sync for FFmpeg {}
+unsafe impl Send for FFmpeg {}

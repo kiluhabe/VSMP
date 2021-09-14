@@ -71,6 +71,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a7c3dd8985a7111efc5c80b44e23ecdd8c007de8ade3b96595387e812b957cf5"
 
 [[package]]
+name = "cc"
+version = "1.0.70"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d26a6ce4b6a484fa3edb70f7efa6fc430fd2b87285fe8b84304fd0936faa0dc0"
+
+[[package]]
 name = "cfg-if"
 version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -123,7 +129,7 @@ dependencies = [
  "cfg-if 0.1.9",
  "crossbeam-utils 0.6.6",
  "lazy_static",
- "memoffset",
+ "memoffset 0.5.1",
  "scopeguard",
 ]
 
@@ -155,6 +161,16 @@ dependencies = [
  "autocfg 1.0.1",
  "cfg-if 0.1.9",
  "lazy_static",
+]
+
+[[package]]
+name = "ctrlc"
+version = "3.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "377c9b002a72a0b2c1a18c62e2f3864bdfea4a015e3683a96e24aa45dd6c02d1"
+dependencies = [
+ "nix",
+ "winapi",
 ]
 
 [[package]]
@@ -284,6 +300,28 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ce6075db033bbbb7ee5a0bbd3a3186bbae616f57fb001c485c7ff77955f8177f"
 dependencies = [
  "rustc_version",
+]
+
+[[package]]
+name = "memoffset"
+version = "0.6.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59accc507f1338036a0477ef61afdae33cde60840f4dfe481319ce3ad116ddf9"
+dependencies = [
+ "autocfg 1.0.1",
+]
+
+[[package]]
+name = "nix"
+version = "0.22.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e7555d6c7164cc913be1ce7f95cbecdabda61eb2ccd89008524af306fb7f5031"
+dependencies = [
+ "bitflags",
+ "cc",
+ "cfg-if 1.0.0",
+ "libc",
+ "memoffset 0.6.4",
 ]
 
 [[package]]
@@ -597,6 +635,7 @@ dependencies = [
 name = "vsmp"
 version = "0.1.0"
 dependencies = [
+ "ctrlc",
  "dirs",
  "image",
  "libc",

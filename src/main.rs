@@ -1,3 +1,4 @@
+extern crate ctrlc;
 extern crate dirs;
 extern crate image;
 extern crate rppal;
@@ -10,37 +11,33 @@ mod cache;
 mod capture;
 mod display;
 mod errors;
+mod vsmp;
 
 use std::path::Path;
 
-use analyzer::Analyzer;
 use cache::Cache;
-use capture::Capture;
-use display::terminal::Terminal;
 use errors::VSMPError;
+use vsmp::{VSMPConfig, VSMP};
 
 fn main() -> Result<(), VSMPError> {
-    let fps = 24f32;
-    let src = Path::new("/home/kiluhabe/codes/VSMP/sample.mkv");
-    let step = 1f32 / fps;
-    let interval = 1000;
-
-    let analyzer = Analyzer::FFprobe.default();
     let cache = Cache::default()?;
-    let capture = Capture::FFmpeg.default();
-    let mut term = Terminal::Ueberzug.default()?;
-
-    let duration = analyzer.duration(src)?;
-
     cache.init()?;
-    cache.purge()?;
 
-    let mut capture_point = 0f32;
-    while capture_point <= duration {
-        let thumbnail = capture.capture(src, &cache.path, capture_point)?;
-        term.display(&thumbnail, 100, 100, interval as u32)?;
-        capture_point += step;
-    }
+    let config = VSMPConfig {
+        src: Path::new("/home/kiluhabe/codes/VSMP/sample.mkv"),
+        cache: &cache.path,
+        fps: 24f32,
+        interval: 1000,
+        height: 100,
+        width: 100,
+    };
+    let mut vsmp = VSMP::default()?;
+
+    ctrlc::set_handler(move || {
+        let cache = Cache::default().unwrap();
+        cache.purge().unwrap();
+    })?;
+    vsmp.play(config)?;
     cache.purge()?;
     Ok(())
 }

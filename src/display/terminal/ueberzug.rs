@@ -1,3 +1,4 @@
+use std::fs;
 use std::io::Write;
 use std::path::Path;
 use std::process::{Child, Command, Stdio};
@@ -102,9 +103,13 @@ impl Displayable for Ueberzug {
             )),
             wait_millis,
         )?;
+        fs::remove_file(path)?;
         Ok(())
     }
 }
+
+unsafe impl Sync for Ueberzug {}
+unsafe impl Send for Ueberzug {}
 
 impl UeberzugAddConfig {
     pub fn default(identifier: String, path: String, height: u32, width: u32) -> Self {

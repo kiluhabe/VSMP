@@ -4,6 +4,7 @@ use std::process::Command;
 use crate::analyzer::Analyzable;
 use crate::errors::VSMPError;
 
+#[derive(Copy, Clone)]
 pub struct FFprobe;
 
 impl FFprobe {
@@ -30,3 +31,6 @@ impl Analyzable for FFprobe {
         Ok(duration)
     }
 }
+
+unsafe impl Sync for FFprobe {}
+unsafe impl Send for FFprobe {}

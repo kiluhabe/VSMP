@@ -1,4 +1,6 @@
 use image::ImageError;
+
+use ctrlc;
 use rppal::{gpio, spi};
 use serde_json;
 
@@ -49,6 +51,7 @@ pub enum VSMPError {
     FromUtf8(string::FromUtf8Error),
     CacheDir(CacheDirError),
     ParseFloat(ParseFloatError),
+    Ctrlc(ctrlc::Error),
 }
 
 impl From<gpio::Error> for VSMPError {
@@ -102,5 +105,11 @@ impl From<CacheDirError> for VSMPError {
 impl From<ParseFloatError> for VSMPError {
     fn from(err: ParseFloatError) -> VSMPError {
         VSMPError::ParseFloat(err)
+    }
+}
+
+impl From<ctrlc::Error> for VSMPError {
+    fn from(err: ctrlc::Error) -> VSMPError {
+        VSMPError::Ctrlc(err)
     }
 }
