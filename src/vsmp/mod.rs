@@ -1,10 +1,16 @@
+mod analyzer;
+pub mod cache;
+mod capture;
+mod display;
+pub mod errors;
+
 use std::path::Path;
 
-use crate::analyzer::{Analyzable, Analyzer};
-use crate::capture::{Capturable, Capture};
-use crate::display::terminal::Terminal;
-use crate::display::Displayable;
-use crate::errors::VSMPError;
+use analyzer::{Analyzable, Analyzer};
+use capture::{Capturable, Capture};
+use display::terminal::Terminal;
+use display::Displayable;
+use errors::VSMPError;
 
 pub struct VSMP {
     analyzer: Box<dyn Analyzable + Sync + Send>,
@@ -12,7 +18,7 @@ pub struct VSMP {
     display: Box<dyn Displayable + Sync + Send>,
 }
 
-pub struct VSMPConfig<'a> {
+pub struct Config<'a> {
     pub height: u32,
     pub width: u32,
     pub fps: f32,
@@ -29,7 +35,7 @@ impl VSMP {
             display: Terminal::Ueberzug.default()?,
         })
     }
-    pub fn play(&mut self, config: VSMPConfig) -> Result<(), VSMPError> {
+    pub fn play(&mut self, config: Config) -> Result<(), VSMPError> {
         let duration = self.analyzer.duration(&config.src)?;
         let mut capture_point = 0f32;
         while capture_point <= duration {
@@ -44,7 +50,7 @@ impl VSMP {
     }
 }
 
-impl<'a> VSMPConfig<'a> {
+impl<'a> Config<'a> {
     pub fn step(&self) -> f32 {
         1f32 / self.fps
     }

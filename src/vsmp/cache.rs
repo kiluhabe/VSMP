@@ -1,9 +1,7 @@
+use crate::vsmp::errors::{CacheDirError, VSMPError};
+use dirs;
 use std::fs;
 use std::path::Path;
-
-use dirs;
-
-use crate::errors::{CacheDirError, VSMPError};
 
 pub struct Cache {
     pub path: Box<Path>,

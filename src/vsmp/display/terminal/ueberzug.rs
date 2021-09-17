@@ -1,15 +1,13 @@
+use crate::vsmp::display::Displayable;
+use crate::vsmp::errors::VSMPError;
+use serde::{Deserialize, Serialize};
+use serde_json;
 use std::fs;
 use std::io::Write;
 use std::path::Path;
 use std::process::{Child, Command, Stdio};
 use std::{thread, time};
-
-use serde::{Deserialize, Serialize};
-use serde_json;
 use uuid::Uuid;
-
-use crate::display::Displayable;
-use crate::errors::VSMPError;
 
 pub struct Ueberzug {
     identifier: String,

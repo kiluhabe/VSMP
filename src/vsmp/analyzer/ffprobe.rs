@@ -1,8 +1,7 @@
+use crate::vsmp::analyzer::Analyzable;
+use crate::vsmp::errors::VSMPError;
 use std::path::Path;
 use std::process::Command;
-
-use crate::analyzer::Analyzable;
-use crate::errors::VSMPError;
 
 #[derive(Copy, Clone)]
 pub struct FFprobe;

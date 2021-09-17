@@ -1,17 +1,15 @@
 mod ffprobe;
 
-use std::path::Path;
-
+use crate::vsmp::errors::VSMPError;
 use ffprobe::FFprobe;
-
-use crate::errors::VSMPError;
-
-pub trait Analyzable {
-    fn duration(&self, src: &Path) -> Result<f32, VSMPError>;
-}
+use std::path::Path;
 
 pub enum Analyzer {
     FFprobe,
+}
+
+pub trait Analyzable {
+    fn duration(&self, src: &Path) -> Result<f32, VSMPError>;
 }
 
 impl Analyzer {

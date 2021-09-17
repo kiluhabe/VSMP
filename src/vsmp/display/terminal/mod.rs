@@ -1,8 +1,7 @@
 mod ueberzug;
 
-use crate::display::Displayable;
-use crate::errors::VSMPError;
-
+use crate::vsmp::display::Displayable;
+use crate::vsmp::errors::VSMPError;
 use ueberzug::Ueberzug;
 
 pub enum Terminal {

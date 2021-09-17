@@ -2,19 +2,16 @@ mod command;
 mod interface;
 mod pin;
 
-use rppal::gpio::Level;
-
-use std::fs;
-use std::path::Path;
-use std::{thread, time};
-
-use crate::display::image_converter::ImageConverter;
-use crate::display::Displayable;
-use crate::errors::VSMPError;
-
+use crate::vsmp::display::image_converter::ImageConverter;
+use crate::vsmp::display::Displayable;
+use crate::vsmp::errors::VSMPError;
 use command::Command;
 use interface::Interface;
 use pin::PinNumber;
+use rppal::gpio::Level;
+use std::fs;
+use std::path::Path;
+use std::{thread, time};
 
 pub struct EPD {
     interface: Interface,

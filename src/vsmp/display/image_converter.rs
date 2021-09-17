@@ -1,7 +1,6 @@
-use std::path::Path;
-
-use crate::errors::VSMPError;
+use crate::vsmp::errors::VSMPError;
 use image::FilterType;
+use std::path::Path;
 
 pub struct ImageConverter {}
 

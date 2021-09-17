@@ -2,9 +2,8 @@ pub mod epd;
 mod image_converter;
 pub mod terminal;
 
+use crate::vsmp::errors::VSMPError;
 use std::path::Path;
-
-use crate::errors::VSMPError;
 
 pub trait Displayable {
     fn display(

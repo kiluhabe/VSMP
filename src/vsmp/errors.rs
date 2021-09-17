@@ -3,7 +3,6 @@ use image::ImageError;
 use ctrlc;
 use rppal::{gpio, spi};
 use serde_json;
-
 use std::error;
 use std::fmt;
 use std::io;

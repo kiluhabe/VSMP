@@ -2,7 +2,7 @@ use rppal::gpio::{Gpio, Level};
 use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
 
 use super::pin::PinNumber;
-use crate::errors::VSMPError;
+use crate::vsmp::errors::VSMPError;
 
 pub struct Interface {
     pub spi: Spi,

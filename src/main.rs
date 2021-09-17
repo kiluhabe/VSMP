@@ -6,24 +6,18 @@ extern crate serde;
 extern crate serde_json;
 extern crate uuid;
 
-mod analyzer;
-mod cache;
-mod capture;
-mod display;
-mod errors;
 mod vsmp;
 
 use std::path::Path;
-
-use cache::Cache;
-use errors::VSMPError;
-use vsmp::{VSMPConfig, VSMP};
+use vsmp::cache::Cache;
+use vsmp::errors::VSMPError;
+use vsmp::{Config, VSMP};
 
 fn main() -> Result<(), VSMPError> {
     let cache = Cache::default()?;
     cache.init()?;
 
-    let config = VSMPConfig {
+    let config = Config {
         src: Path::new("/home/kiluhabe/codes/VSMP/sample.mkv"),
         cache: &cache.path,
         fps: 24f32,

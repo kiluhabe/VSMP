@@ -1,8 +1,7 @@
+use crate::vsmp::capture::Capturable;
+use crate::vsmp::errors::VSMPError;
 use std::path::Path;
 use std::process::Command;
-
-use crate::capture::Capturable;
-use crate::errors::VSMPError;
 
 pub struct FFmpeg;
 
