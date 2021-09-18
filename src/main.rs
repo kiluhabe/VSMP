@@ -27,6 +27,6 @@ fn main() -> Result<(), VsmpError> {
     })?;
 
     let mut player = vsmp.lock().unwrap();
-    player.play(config)?;
+    player.play(config).or_else(|_| player.cleanup())?;
     Ok(())
 }
