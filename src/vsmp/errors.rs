@@ -40,7 +40,20 @@ impl error::Error for CacheDirError {
     }
 }
 
-type PoisonMutexGuardError = sync::PoisonError<sync::MutexGuard<'static, dyn std::any::Any>>;
+#[derive(Debug, Clone)]
+pub struct InvalidDisplayError;
+
+impl fmt::Display for InvalidDisplayError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "invalid display.")
+    }
+}
+
+impl error::Error for InvalidDisplayError {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+        None
+    }
+}
 
 #[derive(Debug)]
 pub enum VSMPError {
@@ -54,13 +67,24 @@ pub enum VSMPError {
     CacheDir(CacheDirError),
     ParseFloat(ParseFloatError),
     Ctrlc(ctrlc::Error),
-    InvalidDisplay,
-    PoisonMutexGuard(PoisonMutexGuardError),
+    InvalidDisplay(InvalidDisplayError),
 }
 
 impl fmt::Display for VSMPError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.fmt(f)
+        match self {
+            Self::Gpio(e) => e.fmt(f),
+            Self::Spi(e) => e.fmt(f),
+            Self::ImageSize(e) => e.fmt(f),
+            Self::Image(e) => e.fmt(f),
+            Self::SerdeJson(e) => e.fmt(f),
+            Self::IO(e) => e.fmt(f),
+            Self::FromUtf8(e) => e.fmt(f),
+            Self::CacheDir(e) => e.fmt(f),
+            Self::ParseFloat(e) => e.fmt(f),
+            Self::Ctrlc(e) => e.fmt(f),
+            Self::InvalidDisplay(e) => e.fmt(f),
+        }
     }
 }
 
@@ -128,8 +152,8 @@ impl From<ctrlc::Error> for VSMPError {
     }
 }
 
-impl From<PoisonMutexGuardError> for VSMPError {
-    fn from(err: PoisonMutexGuardError) -> VSMPError {
-        VSMPError::PoisonMutexGuard(err)
+impl From<InvalidDisplayError> for VSMPError {
+    fn from(err: InvalidDisplayError) -> VSMPError {
+        VSMPError::InvalidDisplay(err)
     }
 }

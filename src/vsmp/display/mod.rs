@@ -2,7 +2,7 @@ pub mod epd;
 mod image_converter;
 pub mod terminal;
 
-use crate::vsmp::errors::VSMPError;
+use crate::vsmp::errors::{InvalidDisplayError, VSMPError};
 use std::path::Path;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -21,7 +21,7 @@ impl std::str::FromStr for Display {
         match s {
             "epd" => Ok(Display::EPD),
             "ueberzug" => Ok(Display::Ueberzug),
-            _ => Err(VSMPError::InvalidDisplay),
+            _ => Err(VSMPError::InvalidDisplay(InvalidDisplayError {})),
         }
     }
 }
