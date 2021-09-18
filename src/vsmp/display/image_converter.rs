@@ -1,11 +1,11 @@
-use crate::vsmp::errors::VSMPError;
+use crate::vsmp::errors::VsmpError;
 use image::FilterType;
 use std::path::Path;
 
 pub struct ImageConverter {}
 
 impl ImageConverter {
-    pub fn convert(&self, path: &Path, height: u32, width: u32) -> Result<Vec<u8>, VSMPError> {
+    pub fn convert(&self, path: &Path, height: u32, width: u32) -> Result<Vec<u8>, VsmpError> {
         let img = image::open(&path)?;
         let resized_image = img.resize_exact(width / 2, height, FilterType::Lanczos3);
         let mut gray_image = resized_image.grayscale().adjust_contrast(50.0).to_luma();

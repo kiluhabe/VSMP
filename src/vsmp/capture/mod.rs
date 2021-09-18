@@ -1,6 +1,6 @@
 mod ffmpeg;
 
-use crate::vsmp::errors::VSMPError;
+use crate::vsmp::errors::VsmpError;
 use ffmpeg::FFmpeg;
 use std::path::Path;
 
@@ -9,7 +9,7 @@ pub enum Capture {
 }
 
 pub trait Capturable {
-    fn capture(&self, src: &Path, dist_dir: &Path, sec: f32) -> Result<Box<Path>, VSMPError>;
+    fn capture(&self, src: &Path, dist_dir: &Path, sec: f32) -> Result<Box<Path>, VsmpError>;
 }
 
 impl Capture {

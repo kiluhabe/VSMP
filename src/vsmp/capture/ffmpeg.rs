@@ -1,5 +1,5 @@
 use crate::vsmp::capture::Capturable;
-use crate::vsmp::errors::VSMPError;
+use crate::vsmp::errors::VsmpError;
 use std::path::Path;
 use std::process::Command;
 
@@ -12,7 +12,7 @@ impl FFmpeg {
 }
 
 impl Capturable for FFmpeg {
-    fn capture(&self, src: &Path, dist_dir: &Path, sec: f32) -> Result<Box<Path>, VSMPError> {
+    fn capture(&self, src: &Path, dist_dir: &Path, sec: f32) -> Result<Box<Path>, VsmpError> {
         let file_name = format!(
             "{}-{}.jpg",
             src.file_stem().unwrap().to_str().unwrap(),

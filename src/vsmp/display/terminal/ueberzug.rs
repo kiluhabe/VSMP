@@ -1,5 +1,5 @@
 use crate::vsmp::display::Displayable;
-use crate::vsmp::errors::VSMPError;
+use crate::vsmp::errors::VsmpError;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::io::Write;
@@ -13,7 +13,7 @@ pub struct Ueberzug {
 }
 
 trait Formattable {
-    fn format(&self) -> Result<String, VSMPError>;
+    fn format(&self) -> Result<String, VsmpError>;
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -58,7 +58,7 @@ enum Scaler {
 }
 
 impl Ueberzug {
-    pub fn default() -> Result<Self, VSMPError> {
+    pub fn default() -> Result<Self, VsmpError> {
         let identifier = Uuid::new_v4().to_hyphenated().to_string();
         let process = Command::new("ueberzug")
             .args(&["layer", "-p", "json"])
@@ -70,7 +70,7 @@ impl Ueberzug {
             process: process,
         })
     }
-    fn command(&self, config: Box<dyn Formattable>) -> Result<(), VSMPError> {
+    fn command(&self, config: Box<dyn Formattable>) -> Result<(), VsmpError> {
         self.process
             .stdin
             .as_ref()
@@ -81,7 +81,7 @@ impl Ueberzug {
 }
 
 impl Displayable for Ueberzug {
-    fn display(&mut self, path: &Path, height: u32, width: u32) -> Result<(), VSMPError> {
+    fn display(&mut self, path: &Path, height: u32, width: u32) -> Result<(), VsmpError> {
         let identifier = &self.identifier;
         self.command(Box::from(UeberzugAddConfig::default(
             identifier.to_string(),
@@ -116,7 +116,7 @@ impl UeberzugAddConfig {
 }
 
 impl Formattable for UeberzugAddConfig {
-    fn format(&self) -> Result<String, VSMPError> {
+    fn format(&self) -> Result<String, VsmpError> {
         let json = serde_json::to_string(&self)?;
         Ok(format!("{}\n", json))
     }
@@ -133,7 +133,7 @@ impl UeberzugRemoveConfig {
 }
 
 impl Formattable for UeberzugRemoveConfig {
-    fn format(&self) -> Result<String, VSMPError> {
+    fn format(&self) -> Result<String, VsmpError> {
         let json = serde_json::to_string(&self)?;
         Ok(format!("{}\n", json))
     }

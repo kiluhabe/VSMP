@@ -10,11 +10,11 @@ use cache::Cache;
 use capture::{Capturable, Capture};
 use display::terminal::Terminal;
 use display::{Display, Displayable};
-use errors::VSMPError;
+use errors::VsmpError;
 use std::path::Path;
 use std::time::Duration;
 
-pub struct VSMP {
+pub struct Vsmp {
     analyzer: Box<dyn Analyzable + Sync + Send>,
     cache: Cache,
     capture: Box<dyn Capturable + Sync + Send>,
@@ -32,31 +32,31 @@ pub struct Config<'a> {
     pub cache: Option<&'a Path>,
 }
 
-impl VSMP {
-    pub fn new(config: Config) -> Result<Self, VSMPError> {
-        Ok(VSMP {
+impl Vsmp {
+    pub fn new(config: Config) -> Result<Self, VsmpError> {
+        Ok(Vsmp {
             analyzer: Analyzer::default(),
             cache: Cache::new(config.cache)?,
             capture: Capture::default(),
             display: config.display.get()?,
         })
     }
-    pub fn default() -> Result<Self, VSMPError> {
-        Ok(VSMP {
+    pub fn default() -> Result<Self, VsmpError> {
+        Ok(Vsmp {
             analyzer: Analyzer::default(),
             cache: Cache::default()?,
             capture: Capture::default(),
             display: Terminal::default()?,
         })
     }
-    pub fn play(&mut self, config: Config) -> Result<(), VSMPError> {
-        let duration = self.analyzer.duration(&config.src)?;
+    pub fn play(&mut self, config: Config) -> Result<(), VsmpError> {
+        let duration = self.analyzer.duration(config.src)?;
         let mut capture_point = 0f32;
         self.cache.init()?;
         while capture_point <= duration {
             let thumbnail = self
                 .capture
-                .capture(&config.src, &self.cache.path, capture_point)?;
+                .capture(config.src, &self.cache.path, capture_point)?;
             self.display.display(&thumbnail, 100, 100)?;
             std::thread::sleep(Duration::from_millis(config.interval as u64));
             self.cache.purge()?;
@@ -64,7 +64,7 @@ impl VSMP {
         }
         Ok(())
     }
-    pub fn cleanup(&self) -> Result<(), VSMPError> {
+    pub fn cleanup(&self) -> Result<(), VsmpError> {
         self.cache.purge()
     }
 }
@@ -75,5 +75,5 @@ impl<'a> Config<'a> {
     }
 }
 
-unsafe impl Sync for VSMP {}
-unsafe impl Send for VSMP {}
+unsafe impl Sync for Vsmp {}
+unsafe impl Send for Vsmp {}

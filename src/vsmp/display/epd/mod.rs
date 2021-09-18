@@ -4,7 +4,7 @@ mod pin;
 
 use crate::vsmp::display::image_converter::ImageConverter;
 use crate::vsmp::display::Displayable;
-use crate::vsmp::errors::VSMPError;
+use crate::vsmp::errors::VsmpError;
 use command::Command;
 use interface::Interface;
 use pin::PinNumber;
@@ -12,26 +12,26 @@ use rppal::gpio::Level;
 use std::path::Path;
 use std::{thread, time};
 
-pub struct EPD {
+pub struct Epd {
     interface: Interface,
     image_converter: ImageConverter,
 }
 
-impl EPD {
-    pub fn default() -> Result<Box<dyn Displayable + Sync + Send>, VSMPError> {
+impl Epd {
+    pub fn default() -> Result<Box<dyn Displayable + Sync + Send>, VsmpError> {
         let interface = Interface::default()?;
         let image_converter = ImageConverter {};
-        Ok(Box::new(EPD {
+        Ok(Box::new(Epd {
             interface: interface,
             image_converter: image_converter,
         }))
     }
-    fn send_command(&mut self, command: Command) -> Result<(), VSMPError> {
+    fn send_command(&mut self, command: Command) -> Result<(), VsmpError> {
         self.interface.write(PinNumber::DCPin, Level::Low)?;
         self.interface.spi_write(&[command.value()])?;
         Ok(())
     }
-    fn send_data(&mut self, data: &[u8]) -> Result<(), VSMPError> {
+    fn send_data(&mut self, data: &[u8]) -> Result<(), VsmpError> {
         self.interface.write(PinNumber::DCPin, Level::High)?;
         self.interface.spi_write(data)?;
         Ok(())
@@ -39,20 +39,20 @@ impl EPD {
     fn sleep(&self, ms: u32) {
         thread::sleep(time::Duration::from_millis(ms as u64));
     }
-    fn reset(&self) -> Result<(), VSMPError> {
+    fn reset(&self) -> Result<(), VsmpError> {
         self.interface.write(PinNumber::RSTPin, Level::Low)?;
         self.sleep(200);
         self.interface.write(PinNumber::RSTPin, Level::High)?;
         self.sleep(200);
         Ok(())
     }
-    fn wait_until_idle(&self) -> Result<(), VSMPError> {
+    fn wait_until_idle(&self) -> Result<(), VsmpError> {
         while self.interface.read(PinNumber::BUSYPin)? == Level::Low {
             self.sleep(100);
         }
         Ok(())
     }
-    pub fn init(&mut self) -> Result<(), VSMPError> {
+    pub fn init(&mut self) -> Result<(), VsmpError> {
         self.reset()?;
 
         self.send_command(Command::PowerSetting)?;
@@ -99,8 +99,8 @@ impl EPD {
     }
 }
 
-impl Displayable for EPD {
-    fn display(&mut self, path: &Path, height: u32, width: u32) -> Result<(), VSMPError> {
+impl Displayable for Epd {
+    fn display(&mut self, path: &Path, height: u32, width: u32) -> Result<(), VsmpError> {
         let buffer = self.image_converter.convert(path, height, width)?;
         self.init()?;
         self.sleep(200);
@@ -115,5 +115,5 @@ impl Displayable for EPD {
     }
 }
 
-unsafe impl Sync for EPD {}
-unsafe impl Send for EPD {}
+unsafe impl Sync for Epd {}
+unsafe impl Send for Epd {}

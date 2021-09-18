@@ -9,7 +9,6 @@ use std::io;
 use std::num::ParseFloatError;
 use std::string;
 
-
 #[derive(Debug, Clone)]
 pub struct ImageSizeError;
 
@@ -56,7 +55,7 @@ impl error::Error for InvalidDisplayError {
 }
 
 #[derive(Debug)]
-pub enum VSMPError {
+pub enum VsmpError {
     Gpio(gpio::Error),
     Spi(spi::Error),
     ImageSize(ImageSizeError),
@@ -70,7 +69,7 @@ pub enum VSMPError {
     InvalidDisplay(InvalidDisplayError),
 }
 
-impl fmt::Display for VSMPError {
+impl fmt::Display for VsmpError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Self::Gpio(e) => e.fmt(f),
@@ -88,72 +87,72 @@ impl fmt::Display for VSMPError {
     }
 }
 
-impl std::error::Error for VSMPError {}
-unsafe impl Send for VSMPError {}
-unsafe impl Sync for VSMPError {}
+impl std::error::Error for VsmpError {}
+unsafe impl Send for VsmpError {}
+unsafe impl Sync for VsmpError {}
 
-impl From<gpio::Error> for VSMPError {
-    fn from(err: gpio::Error) -> VSMPError {
-        VSMPError::Gpio(err)
+impl From<gpio::Error> for VsmpError {
+    fn from(err: gpio::Error) -> VsmpError {
+        VsmpError::Gpio(err)
     }
 }
 
-impl From<spi::Error> for VSMPError {
-    fn from(err: spi::Error) -> VSMPError {
-        VSMPError::Spi(err)
+impl From<spi::Error> for VsmpError {
+    fn from(err: spi::Error) -> VsmpError {
+        VsmpError::Spi(err)
     }
 }
 
-impl From<ImageSizeError> for VSMPError {
-    fn from(err: ImageSizeError) -> VSMPError {
-        VSMPError::ImageSize(err)
+impl From<ImageSizeError> for VsmpError {
+    fn from(err: ImageSizeError) -> VsmpError {
+        VsmpError::ImageSize(err)
     }
 }
 
-impl From<ImageError> for VSMPError {
-    fn from(err: ImageError) -> VSMPError {
-        VSMPError::Image(err)
+impl From<ImageError> for VsmpError {
+    fn from(err: ImageError) -> VsmpError {
+        VsmpError::Image(err)
     }
 }
 
-impl From<serde_json::Error> for VSMPError {
-    fn from(err: serde_json::Error) -> VSMPError {
-        VSMPError::SerdeJson(err)
+impl From<serde_json::Error> for VsmpError {
+    fn from(err: serde_json::Error) -> VsmpError {
+        VsmpError::SerdeJson(err)
     }
 }
 
-impl From<io::Error> for VSMPError {
-    fn from(err: io::Error) -> VSMPError {
-        VSMPError::IO(err)
+impl From<io::Error> for VsmpError {
+    fn from(err: io::Error) -> VsmpError {
+        VsmpError::IO(err)
     }
 }
 
-impl From<string::FromUtf8Error> for VSMPError {
-    fn from(err: string::FromUtf8Error) -> VSMPError {
-        VSMPError::FromUtf8(err)
+impl From<string::FromUtf8Error> for VsmpError {
+    fn from(err: string::FromUtf8Error) -> VsmpError {
+        VsmpError::FromUtf8(err)
     }
 }
 
-impl From<CacheDirError> for VSMPError {
-    fn from(err: CacheDirError) -> VSMPError {
-        VSMPError::CacheDir(err)
+impl From<CacheDirError> for VsmpError {
+    fn from(err: CacheDirError) -> VsmpError {
+        VsmpError::CacheDir(err)
     }
 }
 
-impl From<ParseFloatError> for VSMPError {
-    fn from(err: ParseFloatError) -> VSMPError {
-        VSMPError::ParseFloat(err)
+impl From<ParseFloatError> for VsmpError {
+    fn from(err: ParseFloatError) -> VsmpError {
+        VsmpError::ParseFloat(err)
     }
 }
 
-impl From<ctrlc::Error> for VSMPError {
-    fn from(err: ctrlc::Error) -> VSMPError {
-        VSMPError::Ctrlc(err)
+impl From<ctrlc::Error> for VsmpError {
+    fn from(err: ctrlc::Error) -> VsmpError {
+        VsmpError::Ctrlc(err)
     }
 }
 
-impl From<InvalidDisplayError> for VSMPError {
-    fn from(err: InvalidDisplayError) -> VSMPError {
-        VSMPError::InvalidDisplay(err)
+impl From<InvalidDisplayError> for VsmpError {
+    fn from(err: InvalidDisplayError) -> VsmpError {
+        VsmpError::InvalidDisplay(err)
     }
 }

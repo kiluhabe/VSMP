@@ -12,13 +12,13 @@ mod vsmp;
 use clap::Clap;
 use std::sync::{Arc, Mutex};
 use vsmp::cli::Options;
-use vsmp::errors::VSMPError;
-use vsmp::VSMP;
+use vsmp::errors::VsmpError;
+use vsmp::Vsmp;
 
-fn main() -> Result<(), VSMPError> {
+fn main() -> Result<(), VsmpError> {
     let options: Options = Options::parse();
     let config = options.to_config();
-    let vsmp = Arc::from(Mutex::from(VSMP::new(config)?));
+    let vsmp = Arc::from(Mutex::from(Vsmp::new(config)?));
     let cleaner = vsmp.clone();
 
     ctrlc::set_handler(move || {

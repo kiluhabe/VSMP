@@ -1,5 +1,5 @@
 use crate::vsmp::analyzer::Analyzable;
-use crate::vsmp::errors::VSMPError;
+use crate::vsmp::errors::VsmpError;
 use std::path::Path;
 use std::process::Command;
 
@@ -13,7 +13,7 @@ impl FFprobe {
 }
 
 impl Analyzable for FFprobe {
-    fn duration(&self, src: &Path) -> Result<f32, VSMPError> {
+    fn duration(&self, src: &Path) -> Result<f32, VsmpError> {
         let output = Command::new("ffprobe")
             .args(&[
                 "-v",
