@@ -1,19 +1,19 @@
-pub enum PinNumber {
-    RSTPin,
-    DCPin,
-    CSPin,
-    BUSYPin,
-    BCMPin,
+pub enum Pin {
+    Rst,
+    Dc,
+    Cs,
+    Busy,
+    Bcm,
 }
 
-impl PinNumber {
+impl Pin {
     pub fn value(&self) -> u8 {
         match *self {
-            PinNumber::RSTPin => 17,
-            PinNumber::DCPin => 25,
-            PinNumber::CSPin => 8,
-            PinNumber::BUSYPin => 24,
-            PinNumber::BCMPin => 18,
+            Pin::Rst => 17,
+            Pin::Dc => 25,
+            Pin::Cs => 8,
+            Pin::Busy => 24,
+            Pin::Bcm => 18,
         }
     }
 }

@@ -7,7 +7,7 @@ use crate::vsmp::display::Displayable;
 use crate::vsmp::errors::VsmpError;
 use command::Command;
 use interface::Interface;
-use pin::PinNumber;
+use pin::Pin;
 use rppal::gpio::Level;
 use std::path::Path;
 use std::{thread, time};
@@ -22,17 +22,17 @@ impl Epd {
         let interface = Interface::default()?;
         let image_converter = ImageConverter {};
         Ok(Box::new(Epd {
-            interface: interface,
-            image_converter: image_converter,
+            interface,
+            image_converter,
         }))
     }
     fn send_command(&mut self, command: Command) -> Result<(), VsmpError> {
-        self.interface.write(PinNumber::DCPin, Level::Low)?;
+        self.interface.write(Pin::Dc, Level::Low)?;
         self.interface.spi_write(&[command.value()])?;
         Ok(())
     }
     fn send_data(&mut self, data: &[u8]) -> Result<(), VsmpError> {
-        self.interface.write(PinNumber::DCPin, Level::High)?;
+        self.interface.write(Pin::Dc, Level::High)?;
         self.interface.spi_write(data)?;
         Ok(())
     }
@@ -40,14 +40,14 @@ impl Epd {
         thread::sleep(time::Duration::from_millis(ms as u64));
     }
     fn reset(&self) -> Result<(), VsmpError> {
-        self.interface.write(PinNumber::RSTPin, Level::Low)?;
+        self.interface.write(Pin::Rst, Level::Low)?;
         self.sleep(200);
-        self.interface.write(PinNumber::RSTPin, Level::High)?;
+        self.interface.write(Pin::Rst, Level::High)?;
         self.sleep(200);
         Ok(())
     }
     fn wait_until_idle(&self) -> Result<(), VsmpError> {
-        while self.interface.read(PinNumber::BUSYPin)? == Level::Low {
+        while self.interface.read(Pin::Busy)? == Level::Low {
             self.sleep(100);
         }
         Ok(())

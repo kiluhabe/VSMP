@@ -66,8 +66,8 @@ impl Ueberzug {
             .stdout(Stdio::piped())
             .spawn()?;
         Ok(Self {
-            identifier: identifier,
-            process: process,
+            identifier,
+            process,
         })
     }
     fn command(&self, config: Box<dyn Formattable>) -> Result<(), VsmpError> {
@@ -100,10 +100,10 @@ impl UeberzugAddConfig {
     pub fn default(identifier: String, path: String, height: u32, width: u32) -> Self {
         Self {
             action: "add".to_string(),
-            identifier: identifier,
+            identifier,
             x: 0,
             y: 0,
-            path: path,
+            path,
             width: Some(width),
             height: Some(height),
             draw: None,
@@ -126,7 +126,7 @@ impl UeberzugRemoveConfig {
     pub fn default(identifier: String) -> Self {
         Self {
             action: "remove".to_string(),
-            identifier: identifier,
+            identifier,
             draw: None,
         }
     }
