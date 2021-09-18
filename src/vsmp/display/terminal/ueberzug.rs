@@ -123,6 +123,7 @@ impl Formattable for UeberzugAddConfig {
 }
 
 impl UeberzugRemoveConfig {
+    #[allow(dead_code)]
     pub fn default(identifier: String) -> Self {
         Self {
             action: "remove".to_string(),
@@ -140,6 +141,7 @@ impl Formattable for UeberzugRemoveConfig {
 }
 
 impl Scaler {
+    #[allow(dead_code)]
     pub fn value(&self) -> &str {
         match self {
             Scaler::Crop => "crop",

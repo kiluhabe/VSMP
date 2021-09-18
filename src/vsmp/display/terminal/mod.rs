@@ -5,6 +5,7 @@ use crate::vsmp::errors::VsmpError;
 use ueberzug::Ueberzug;
 
 pub enum Terminal {
+    #[allow(dead_code)]
     Ueberzug,
 }
 

@@ -4,6 +4,7 @@ use crate::vsmp::errors::VsmpError;
 use ffprobe::FFprobe;
 use std::path::Path;
 
+#[allow(dead_code)]
 pub enum Analyzer {
     FFprobe,
 }

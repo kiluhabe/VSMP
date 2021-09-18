@@ -4,6 +4,7 @@ use crate::vsmp::errors::VsmpError;
 use ffmpeg::FFmpeg;
 use std::path::Path;
 
+#[allow(dead_code)]
 pub enum Capture {
     FFmpeg,
 }

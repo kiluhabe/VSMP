@@ -41,6 +41,7 @@ impl Vsmp {
             display: config.display.get()?,
         })
     }
+    #[allow(dead_code)]
     pub fn default() -> Result<Self, VsmpError> {
         Ok(Vsmp {
             analyzer: Analyzer::default(),
