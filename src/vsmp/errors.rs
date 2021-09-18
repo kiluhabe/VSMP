@@ -8,7 +8,7 @@ use std::fmt;
 use std::io;
 use std::num::ParseFloatError;
 use std::string;
-use std::sync;
+
 
 #[derive(Debug, Clone)]
 pub struct ImageSizeError;
