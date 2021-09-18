@@ -9,7 +9,6 @@ use command::Command;
 use interface::Interface;
 use pin::PinNumber;
 use rppal::gpio::Level;
-use std::fs;
 use std::path::Path;
 use std::{thread, time};
 
@@ -19,13 +18,13 @@ pub struct EPD {
 }
 
 impl EPD {
-    pub fn default() -> Result<Self, VSMPError> {
+    pub fn default() -> Result<Box<dyn Displayable + Sync + Send>, VSMPError> {
         let interface = Interface::default()?;
         let image_converter = ImageConverter {};
-        Ok(EPD {
+        Ok(Box::new(EPD {
             interface: interface,
             image_converter: image_converter,
-        })
+        }))
     }
     fn send_command(&mut self, command: Command) -> Result<(), VSMPError> {
         self.interface.write(PinNumber::DCPin, Level::Low)?;
@@ -101,13 +100,7 @@ impl EPD {
 }
 
 impl Displayable for EPD {
-    fn display(
-        &mut self,
-        path: &Path,
-        height: u32,
-        width: u32,
-        wait_millis: u32,
-    ) -> Result<(), VSMPError> {
+    fn display(&mut self, path: &Path, height: u32, width: u32) -> Result<(), VSMPError> {
         let buffer = self.image_converter.convert(path, height, width)?;
         self.init()?;
         self.sleep(200);
@@ -118,8 +111,6 @@ impl Displayable for EPD {
         self.send_command(Command::DisplayRefresh)?;
         self.sleep(100);
         self.wait_until_idle()?;
-        self.sleep(wait_millis);
-        fs::remove_file(path)?;
         Ok(())
     }
 }

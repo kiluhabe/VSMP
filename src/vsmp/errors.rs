@@ -8,6 +8,7 @@ use std::fmt;
 use std::io;
 use std::num::ParseFloatError;
 use std::string;
+use std::sync;
 
 #[derive(Debug, Clone)]
 pub struct ImageSizeError;
@@ -39,6 +40,8 @@ impl error::Error for CacheDirError {
     }
 }
 
+type PoisonMutexGuardError = sync::PoisonError<sync::MutexGuard<'static, dyn std::any::Any>>;
+
 #[derive(Debug)]
 pub enum VSMPError {
     Gpio(gpio::Error),
@@ -51,7 +54,19 @@ pub enum VSMPError {
     CacheDir(CacheDirError),
     ParseFloat(ParseFloatError),
     Ctrlc(ctrlc::Error),
+    InvalidDisplay,
+    PoisonMutexGuard(PoisonMutexGuardError),
 }
+
+impl fmt::Display for VSMPError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.fmt(f)
+    }
+}
+
+impl std::error::Error for VSMPError {}
+unsafe impl Send for VSMPError {}
+unsafe impl Sync for VSMPError {}
 
 impl From<gpio::Error> for VSMPError {
     fn from(err: gpio::Error) -> VSMPError {
@@ -110,5 +125,11 @@ impl From<ParseFloatError> for VSMPError {
 impl From<ctrlc::Error> for VSMPError {
     fn from(err: ctrlc::Error) -> VSMPError {
         VSMPError::Ctrlc(err)
+    }
+}
+
+impl From<PoisonMutexGuardError> for VSMPError {
+    fn from(err: PoisonMutexGuardError) -> VSMPError {
+        VSMPError::PoisonMutexGuard(err)
     }
 }

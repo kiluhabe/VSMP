@@ -8,6 +8,9 @@ pub struct Cache {
 }
 
 impl Cache {
+    pub fn new(path: Option<&Path>) -> Result<Cache, VSMPError> {
+        path.map_or(Self::default(), |p| Ok(Cache { path: Box::from(p) }))
+    }
     pub fn default() -> Result<Cache, VSMPError> {
         let path = dirs::cache_dir().ok_or(CacheDirError)?.join("vsmp");
         Ok(Cache {

@@ -13,9 +13,7 @@ pub trait Analyzable {
 }
 
 impl Analyzer {
-    pub fn default(&self) -> Box<dyn Analyzable + Sync + Send> {
-        match self {
-            Analyzer::FFprobe => Box::new(FFprobe::default()),
-        }
+    pub fn default() -> Box<dyn Analyzable + Sync + Send> {
+        Box::new(FFprobe::default())
     }
 }

@@ -2,11 +2,9 @@ use crate::vsmp::display::Displayable;
 use crate::vsmp::errors::VSMPError;
 use serde::{Deserialize, Serialize};
 use serde_json;
-use std::fs;
 use std::io::Write;
 use std::path::Path;
 use std::process::{Child, Command, Stdio};
-use std::{thread, time};
 use uuid::Uuid;
 
 pub struct Ueberzug {
@@ -72,36 +70,25 @@ impl Ueberzug {
             process: process,
         })
     }
-    fn command(&self, config: Box<dyn Formattable>, wait: u32) -> Result<(), VSMPError> {
+    fn command(&self, config: Box<dyn Formattable>) -> Result<(), VSMPError> {
         self.process
             .stdin
             .as_ref()
             .unwrap()
             .write_all(config.format()?.as_bytes())?;
-        thread::sleep(time::Duration::from_millis(wait as u64));
         Ok(())
     }
 }
 
 impl Displayable for Ueberzug {
-    fn display(
-        &mut self,
-        path: &Path,
-        height: u32,
-        width: u32,
-        wait_millis: u32,
-    ) -> Result<(), VSMPError> {
+    fn display(&mut self, path: &Path, height: u32, width: u32) -> Result<(), VSMPError> {
         let identifier = &self.identifier;
-        self.command(
-            Box::from(UeberzugAddConfig::default(
-                identifier.to_string(),
-                path.to_string_lossy().to_string(),
-                height,
-                width,
-            )),
-            wait_millis,
-        )?;
-        fs::remove_file(path)?;
+        self.command(Box::from(UeberzugAddConfig::default(
+            identifier.to_string(),
+            path.to_string_lossy().to_string(),
+            height,
+            width,
+        )))?;
         Ok(())
     }
 }

@@ -13,9 +13,7 @@ pub trait Capturable {
 }
 
 impl Capture {
-    pub fn default(&self) -> Box<dyn Capturable + Sync + Send> {
-        match self {
-            Capture::FFmpeg => Box::new(FFmpeg::default()),
-        }
+    pub fn default() -> Box<dyn Capturable + Sync + Send> {
+        Box::new(FFmpeg::default())
     }
 }

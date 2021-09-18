@@ -1,3 +1,4 @@
+extern crate clap;
 extern crate ctrlc;
 extern crate dirs;
 extern crate image;
@@ -8,30 +9,25 @@ extern crate uuid;
 
 mod vsmp;
 
-use std::path::Path;
+use clap::Clap;
+use std::sync::{Arc, Mutex, PoisonError};
 use vsmp::cache::Cache;
+use vsmp::cli::Options;
 use vsmp::errors::VSMPError;
-use vsmp::{Config, VSMP};
+use vsmp::VSMP;
 
 fn main() -> Result<(), VSMPError> {
-    let cache = Cache::default()?;
-    cache.init()?;
-
-    let config = Config {
-        src: Path::new("/home/kiluhabe/codes/VSMP/sample.mkv"),
-        cache: &cache.path,
-        fps: 24f32,
-        interval: 1000,
-        height: 100,
-        width: 100,
-    };
-    let mut vsmp = VSMP::default()?;
+    let options: Options = Options::parse();
+    let config = options.to_config();
+    let vsmp = Arc::from(Mutex::from(VSMP::new(config)?));
+    let cleaner = vsmp.clone();
 
     ctrlc::set_handler(move || {
-        let cache = Cache::default().unwrap();
-        cache.purge().unwrap();
+        let cleaner = cleaner.lock().unwrap();
+        cleaner.cleanup().unwrap();
     })?;
-    vsmp.play(config)?;
-    cache.purge()?;
+
+    let mut player = vsmp.lock().unwrap();
+    player.play(config)?;
     Ok(())
 }
