@@ -10,8 +10,7 @@ extern crate uuid;
 mod vsmp;
 
 use clap::Clap;
-use std::sync::{Arc, Mutex, PoisonError};
-use vsmp::cache::Cache;
+use std::sync::{Arc, Mutex};
 use vsmp::cli::Options;
 use vsmp::errors::VSMPError;
 use vsmp::VSMP;
