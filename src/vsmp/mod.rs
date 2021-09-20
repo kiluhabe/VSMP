@@ -28,17 +28,21 @@ pub struct Config<'a> {
     pub fps: f32,
     pub interval: u32,
     pub src: &'a Path,
-    pub display: Display,
     pub cache: Option<&'a Path>,
+    pub debug: Option<i32>
 }
 
 impl Vsmp {
     pub fn new(config: Config) -> Result<Self, VsmpError> {
+        let display = match config.debug {
+            Some(_) => Display::Epd.get()?,
+            _ => Display::Ueberzug.get()?
+        };
         Ok(Vsmp {
             analyzer: Analyzer::default(),
             cache: Cache::new(config.cache)?,
             capture: Capture::default(),
-            display: config.display.get()?,
+            display,
         })
     }
     #[allow(dead_code)]

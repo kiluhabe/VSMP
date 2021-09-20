@@ -1,4 +1,3 @@
-use crate::vsmp::display::Display;
 use crate::vsmp::Config;
 use clap;
 use clap::{AppSettings, Clap};
@@ -8,7 +7,7 @@ use std::path::Path;
 #[clap(version = "1.0", author = "kiluhabe")]
 #[clap(setting = AppSettings::ColoredHelp)]
 pub struct Options {
-    #[clap(short, long)]
+    #[clap(index = 1)]
     src: String,
     #[clap(short, long)]
     height: u32,
@@ -19,9 +18,9 @@ pub struct Options {
     #[clap(short, long)]
     interval: u32,
     #[clap(short, long)]
-    display: Display,
-    #[clap(short, long)]
     cache: Option<String>,
+    #[clap(short, long)]
+    debug: Option<i32>,
 }
 
 impl Options {
@@ -32,8 +31,8 @@ impl Options {
             height: self.height,
             fps: self.fps,
             interval: self.interval,
-            display: self.display,
             cache: self.cache.as_ref().map(|path| Path::new(path)),
+            debug: self.debug
         }
     }
 }
