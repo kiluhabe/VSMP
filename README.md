@@ -16,7 +16,8 @@
 # Install
 
 ```console
-$ cargo install --git https://github.com/seebye/ueberzug
+$ cargo install --git https://github.com/kiluhabe/VSMP.git
+
 ```
 
 ## Usage
