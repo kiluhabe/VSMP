@@ -54,23 +54,24 @@ impl Vsmp {
             display: Terminal::default()?,
         })
     }
-    pub fn play(&mut self, config: Config) -> Result<(), VsmpError> {
+    #[allow(clippy::needless_lifetimes)]
+    pub async fn play<'a>(&mut self, config: Config<'a>) -> Result<(), VsmpError> {
         let duration = self.analyzer.duration(config.src)?;
         let mut capture_point = 0f32;
-        self.cache.init()?;
+        self.cache.init().await?;
         while capture_point <= duration {
             let thumbnail = self
                 .capture
-                .capture(config.src, &self.cache.path, capture_point)?;
-            self.display.display(&thumbnail, 100, 100)?;
+                .capture(config.src, &self.cache.path, capture_point).await?;
+            self.display.display(&thumbnail, 100, 100).await?;
             std::thread::sleep(Duration::from_millis(config.interval as u64));
-            self.cache.purge()?;
+            self.cache.purge().await?;
             capture_point += config.step();
         }
         Ok(())
     }
-    pub fn cleanup(&self) -> Result<(), VsmpError> {
-        self.cache.purge()
+    pub async fn cleanup(&self) -> Result<(), VsmpError> {
+        self.cache.purge().await
     }
 }
 

@@ -11,6 +11,7 @@ use pin::Pin;
 use rppal::gpio::Level;
 use std::path::Path;
 use std::{thread, time};
+use async_trait::async_trait;
 
 pub struct Epd {
     interface: Interface,
@@ -99,8 +100,9 @@ impl Epd {
     }
 }
 
+#[async_trait]
 impl Displayable for Epd {
-    fn display(&mut self, path: &Path, height: u32, width: u32) -> Result<(), VsmpError> {
+    async fn display(&mut self, path: &Path, height: u32, width: u32) -> Result<(), VsmpError> {
         let buffer = self.image_converter.convert(path, height, width)?;
         self.init()?;
         self.sleep(200);

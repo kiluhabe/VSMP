@@ -2,6 +2,7 @@ use crate::vsmp::capture::Capturable;
 use crate::vsmp::errors::VsmpError;
 use std::path::Path;
 use std::process::Command;
+use async_trait::async_trait;
 
 pub struct FFmpeg;
 
@@ -11,8 +12,9 @@ impl FFmpeg {
     }
 }
 
+#[async_trait]
 impl Capturable for FFmpeg {
-    fn capture(&self, src: &Path, dist_dir: &Path, sec: f32) -> Result<Box<Path>, VsmpError> {
+    async fn capture(&self, src: &Path, dist_dir: &Path, sec: f32) -> Result<Box<Path>, VsmpError> {
         let file_name = format!(
             "{}-{}.jpg",
             src.file_stem().unwrap().to_str().unwrap(),

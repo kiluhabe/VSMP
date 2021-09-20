@@ -6,6 +6,7 @@ use std::io::Write;
 use std::path::Path;
 use std::process::{Child, Command, Stdio};
 use uuid::Uuid;
+use async_trait::async_trait;
 
 pub struct Ueberzug {
     identifier: String,
@@ -80,8 +81,9 @@ impl Ueberzug {
     }
 }
 
+#[async_trait]
 impl Displayable for Ueberzug {
-    fn display(&mut self, path: &Path, height: u32, width: u32) -> Result<(), VsmpError> {
+    async fn display(&mut self, path: &Path, height: u32, width: u32) -> Result<(), VsmpError> {
         let identifier = &self.identifier;
         self.command(Box::from(UeberzugAddConfig::default(
             identifier.to_string(),

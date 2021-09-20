@@ -17,7 +17,7 @@ impl Cache {
             path: Box::from(path.as_path()),
         })
     }
-    pub fn init(&self) -> Result<(), VsmpError> {
+    pub async fn init(&self) -> Result<(), VsmpError> {
         if self.path.exists() {
             Ok(())
         } else {
@@ -25,7 +25,7 @@ impl Cache {
             Ok(())
         }
     }
-    pub fn purge(&self) -> Result<(), VsmpError> {
+    pub async fn purge(&self) -> Result<(), VsmpError> {
         for entry in self.path.read_dir()? {
             fs::remove_file(entry?.path())?;
         }

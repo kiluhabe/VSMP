@@ -6,6 +6,8 @@ extern crate rppal;
 extern crate serde;
 extern crate serde_json;
 extern crate uuid;
+extern crate futures;
+extern crate async_trait;
 
 mod vsmp;
 
@@ -14,6 +16,7 @@ use std::sync::{Arc, Mutex};
 use vsmp::cli::Options;
 use vsmp::errors::VsmpError;
 use vsmp::Vsmp;
+use futures::executor;
 
 fn main() -> Result<(), VsmpError> {
     let options: Options = Options::parse();
@@ -23,10 +26,11 @@ fn main() -> Result<(), VsmpError> {
 
     ctrlc::set_handler(move || {
         let cleaner = cleaner.lock().unwrap();
-        cleaner.cleanup().unwrap();
+        executor::block_on(cleaner.cleanup()).unwrap()
     })?;
 
     let mut player = vsmp.lock().unwrap();
-    player.play(config).or_else(|_| player.cleanup())?;
+    executor::block_on(player.play(config))
+        .or_else(|_| executor::block_on(player.cleanup()))?;
     Ok(())
 }

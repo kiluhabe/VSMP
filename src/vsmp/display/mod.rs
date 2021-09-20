@@ -4,6 +4,7 @@ pub mod terminal;
 
 use crate::vsmp::errors::{InvalidDisplayError, VsmpError};
 use std::path::Path;
+use async_trait::async_trait;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Display {
@@ -11,8 +12,9 @@ pub enum Display {
     Ueberzug,
 }
 
+#[async_trait]
 pub trait Displayable {
-    fn display(&mut self, path: &Path, height: u32, width: u32) -> Result<(), VsmpError>;
+    async fn display(&mut self, path: &Path, height: u32, width: u32) -> Result<(), VsmpError>;
 }
 
 impl std::str::FromStr for Display {
