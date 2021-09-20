@@ -4,10 +4,18 @@
 
 *[Very SLow Movie Player](https://techcrunch.com/2018/12/28/the-very-slow-movie-player-shows-a-film-over-an-entire-year/) implemented in Rust.*
 
-## Demo
+# Dependencies
+- [**ffmpeg**](https://www.ffmpeg.org/)
+- [ueberzug](https://github.com/seebye/ueberzug)(for debug)
 
-Setup [BalenaOS](https://www.balena.io/docs/learn/getting-started/raspberry-pi/rust/) and just push master blanch.
+# Install
 
-```sh
-$ git push balena master
+```console
+$ cargo install --git https://github.com/seebye/ueberzug
+```
+
+## Usage
+
+```console
+$ vsmp --help
 ```
