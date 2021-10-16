@@ -6,6 +6,23 @@ FROM balenalib/rpi-debian as base
 
 ENV INITSYSTEM=on
 ENV DEBIAN_FRONTEND=noninteractive
+ENV WIFI_CONNECT_VERSION=v4.4.6
+
+################################################################################
+# Tools
+################################################################################
+FROM base as tools
+
+WORKDIR /tmp
+
+# Install build tools
+RUN apt-get -q update && apt-get install -yq --no-install-recommends build-essential curl file
+
+# Install youtube-dl
+RUN curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
+
+RUN curl -Ls "https://github.com/balena-io/wifi-connect/releases/download/$WIFI_CONNECT_VERSION/wifi-connect-$WIFI_CONNECT_VERSION-linux-rpi.tar.gz" \
+  | tar -xvz -C  /tmp
 
 ################################################################################
 # Rust image
@@ -77,12 +94,18 @@ FROM base
 
 WORKDIR /app
 
+RUN apt-get -q update && apt-get install -yq --no-install-recommends dnsmasq wireless-tools
+
 # Copy binary from builder image
 COPY --from=builder /build/app/target/release/vsmp .
-COPY ./sample.png /tmp/vsmp/images/sample.png
 
-# Copy other folders required by the application. Example:
-# COPY --from=builder /build/app/assets assets
+COPY --from=tools /usr/local/bin/youtube-dl /usr/local/bin/youtube-dl
+COPY --from=tools /tmp/wifi-connect /usr/local/bin/wifi-connect
+
+COPY ./entrypoint.sh ./entrypoint.sh
+
+RUN chmod +x ./entrypoint.sh
 
 # Launch application
+ENTRYPOINT [./entrypoint.sh]
 CMD ["./vsmp"]
