@@ -2,6 +2,7 @@
   "name": "vsmp",
   "scripts": {
     "login": "balena login",
+    "build": "balena build -f VerySlowMoviePlayer",
     "deploy": "balena push VerySlowMoviePlayer"
   },
   "dvDependencies": {

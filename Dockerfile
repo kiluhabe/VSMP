@@ -19,7 +19,7 @@ WORKDIR /tmp
 RUN apt-get -q update && apt-get install -yq --no-install-recommends build-essential curl file
 
 # Install youtube-dl
-RUN curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
+RUN curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /tmp/youtube-dl
 
 RUN curl -Ls "https://github.com/balena-io/wifi-connect/releases/download/$WIFI_CONNECT_VERSION/wifi-connect-$WIFI_CONNECT_VERSION-linux-rpi.tar.gz" \
   | tar -xvz -C  /tmp
@@ -94,13 +94,13 @@ FROM base
 
 WORKDIR /app
 
-RUN apt-get -q update && apt-get install -yq --no-install-recommends dnsmasq wireless-tools
+RUN apt-get -q update && apt-get install -yq --no-install-recommends dnsmasq wireless-tools ffmpeg
 
 # Copy binary from builder image
 COPY --from=builder /build/app/target/release/vsmp .
 
-COPY --from=tools /usr/local/bin/youtube-dl /usr/local/bin/youtube-dl
-COPY --from=tools /tmp/wifi-connect /usr/local/bin/wifi-connect
+COPY --from=tools /tmp/youtube-dl .
+COPY --from=tools /tmp/wifi-connect .
 
 COPY ./entrypoint.sh ./entrypoint.sh
 

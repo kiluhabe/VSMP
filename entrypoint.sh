@@ -15,7 +15,7 @@ fi
 
 VIDEO_DIR=$HOME/videos
 
-if [ ! -f "$(which youtube-dl)" ]; then
+if [ ! -f ./youtube-dl ]; then
     echo "youtube-dl not found."
     exit 1
 fi
@@ -24,11 +24,11 @@ if [ ! -d $VIDEO_DIR ]; then
     mkdir $VIDEO_DIR
 fi
 
-VIDEO_NAME=$(youtube-dl --get-filename -o '%(title)s.%(ext)s' $VIDEO_URL --restrict-filenames)
+VIDEO_NAME=$(./youtube-dl --get-filename -o '%(title)s.%(ext)s' $VIDEO_URL --restrict-filenames)
 
 echo "Downloading $VIDEO_NAME ..."
 
-youtube-dl -o $VIDEO_DIR/$VIDEO_NAME $VIDEO_URL
+./youtube-dl -o $VIDEO_DIR/$VIDEO_NAME $VIDEO_URL
 
 echo "Download finished."
 
