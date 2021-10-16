@@ -32,4 +32,12 @@ youtube-dl -o $VIDEO_DIR/$VIDEO_NAME $VIDEO_URL
 
 echo "Download finished."
 
+echo "==== VSMP running options===="
+echo "video: $VIDEO_DIR/$VIDEO_NAME"
+echo "height: $HEIGHT"
+echo "width: $WIDTH"
+echo "fps: $FPS"
+echo "interval: $INTERVAL"
+echo "============================="
+
 exec "$@ -h $HEIGHT -w $WIDTH -f $FPS -i $INTERVAL $VIDEO_DIR/$VIDEO_NAME"
