@@ -107,5 +107,5 @@ COPY ./entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
 # Launch application
-ENTRYPOINT [./entrypoint.sh]
+ENTRYPOINT ["./entrypoint.sh"]
 CMD ["./vsmp"]

@@ -1,0 +1,10 @@
+{
+  "name": "vsmp",
+  "scripts": {
+    "login": "balena login",
+    "deploy": "balena push VerySlowMoviePlayer"
+  },
+  "dvDependencies": {
+    "balena-cli": "^12.50.2"
+  }
+}
