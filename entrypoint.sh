@@ -26,6 +26,10 @@ fi
 
 VIDEO_NAME=$(youtube-dl --get-filename -o '%(title)s.%(ext)s' $VIDEO_URL --restrict-filenames)
 
+echo "Downloading $VIDEO_NAME ..."
+
 youtube-dl -o $VIDEO_DIR/$VIDEO_NAME $VIDEO_URL
+
+echo "Download finished."
 
 exec "$@ -h $HEIGHT -w $WIDTH -f $FPS -i $INTERVAL $VIDEO_DIR/$VIDEO_NAME"
